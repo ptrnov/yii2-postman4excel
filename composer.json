@@ -1,0 +1,27 @@
+{
+	"name": "ptrnov/yii2-postman4excel",
+	"description": "Excel on view or console cronjobs",
+	"type": "yii2-extension",
+	"keywords": ["yii2","extension","postman","ptrnov","postman4excel","yii2","excel",],
+	"license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "Piter Novian",
+			"email": "ptr.nov@gmail.com"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/ptrnov/yii2-postman4excel/issues",
+		"source": "https://github.com/ptrnov/yii2-postman4excel"
+	},
+	"minimum-stability": "dev",
+	"require": {
+		"yiisoft/yii2": "*",
+		"phpoffice/phpexcel": "*"
+	},
+	"autoload": {
+		"psr-4": {
+			"ptrnov\\excel\\": ""
+		}
+	}
+}
