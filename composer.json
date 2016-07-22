@@ -16,8 +16,7 @@
 	},
 	"minimum-stability": "stable",
 	"require": {
-		"yiisoft/yii2": "*",
-		"phpoffice/phpexcel": "*"
+		"yiisoft/yii2": "*"
 	},
 	"autoload": {
 		"psr-4": {
