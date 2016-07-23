@@ -10,6 +10,12 @@
 			"email": "ptr.nov@gmail.com"
 		}
 	],
+	"repositories": [
+        {
+            "type": "vcs",
+            "url":  "https://github.com/ptrnov/yii2-postman4excel.git"
+        },
+    ],
 	"minimum-stability": "dev",
 	"support": {
 		"issues": "https://github.com/ptrnov/yii2-postman4excel/issues",
