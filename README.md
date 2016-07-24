@@ -29,4 +29,5 @@ Usage
 Once the extension is installed, simply use it in your code by  :
 
 ```php
-<?= \ptrnov\yii2-postman4excel\Cronjob::world(); ?>```
+<?= \ptrnov\postman4excel\Cronjob::world( ?>
+```
