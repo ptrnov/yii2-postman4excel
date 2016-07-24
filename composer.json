@@ -14,10 +14,7 @@
 		"issues": "https://github.com/ptrnov/yii2-postman4excel/issues",
 		"source": "https://github.com/ptrnov/yii2-postman4excel"
 	},
-	"minimum-stability": "dev",
-	"prefer-stable" : true,
-	"require": {
-		"yiisoft/yii2": "*"
+	"require": {		
 	},
 	"autoload": {
 		"psr-4": {
