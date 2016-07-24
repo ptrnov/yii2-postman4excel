@@ -3,13 +3,13 @@
 	"description": "Excel on view or console cronjobs",
 	"type": "yii2-extension",
 	"keywords": ["yii2","ptr","nov","extension","postman4excel","postman","excel","postman4"],
-	"license": "MIT",
+	"license": "BSD-3-Clause",
 	"authors": [
 		{
 			"name": "Piter Novian",
 			"email": "ptr.nov@gmail.com"
 		}
-	],
+	],	
 	"support": {
 		"issues": "https://github.com/ptrnov/yii2-postman4excel/issues",
 		"source": "https://github.com/ptrnov/yii2-postman4excel"
@@ -17,6 +17,7 @@
 	"require": {
 		"yiisoft/yii2": "*"
 	},
+	"minimum-stability": "dev",
 	"autoload": {
 		"psr-4": {
 			"ptrnov\\postman4excel\\": ""
