@@ -12,7 +12,7 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist ptrnov/yii2-postman4excel "dev-master"
+php composer.phar require --prefer-dist ptrnov/yii2-postman4excel "*"
 ```
 
 or add
@@ -32,7 +32,7 @@ Once the extension is installed, simply use it in your code by  :
 ```php
 	use ptrnov\postman4excel\Postman4ExcelBehavior;
 	public function behaviors(){
-			'export2excel' => [
+			'export4excel' => [
 				'class' => Postman4ExcelBehavior::className(),
 				'downloadPath'=>'your path'		//defult "/vendor/ptrnov/yii2-postman4excel/tmp/", Ecample Windows path "d:/folder/"
 				'widgetType'=>'download' 		//download web browser, delete before download, tmp_download
