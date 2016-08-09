@@ -20,6 +20,7 @@ use \PHPExcel_Style_Border;
 
 /**
  * @var string
+ * base on scotthuangzl
  * @author ptrnov [ptr.nov@gmail.com]
  * @since 1.0.0
  * @state Indonesia
@@ -36,12 +37,6 @@ class Postman4ExcelBehavior extends Behavior
      * @var string
      */
     public $suffixStr = ''; //default will be date('Ymd-His')
-	public $startRowsValue='';
-
-	
-	const TYPE_DEFAULT = 'download';
-    const TYPE_CRONJOB = 'cronjob';
-    const TYPE_MAIL = 'mail';
 	
 	/**
 	* @var string
@@ -57,17 +52,44 @@ class Postman4ExcelBehavior extends Behavior
 	*/
 	public $widgetType = '';	
 		
+		
+	public $startRowsValue='';
+
+	
+	const TYPE_DEFAULT = 'download';
+    const TYPE_CRONJOB = 'cronjob';
+    const TYPE_MAIL = 'mail';	
+				
 	/**
 	* @var string
-	* Setting path
+	* Path directory constanta
 	* @author ptrnov [ptr.nov@gmail.com]
 	* @since 1.0.0
 	*/
-	private function getPath(){
-		//$defaultPath=dirname(__DIR__).'vendor';
+	private static function getPath($downloadPath){
 		$defaultPath=Yii::getAlias('@vendor').'/ptrnov/yii2-postman4excel/tmp/';
-		$newPath=$this->downloadPath;
-		return  $newPath!=''?$newPath:$defaultPath;
+		return  $downloadPath!=''?$downloadPath:$defaultPath;
+	}	
+	
+	/**
+	* @var string
+	* widgetType validation constanta
+	* @author ptrnov [ptr.nov@gmail.com]
+	* @since 1.0.0
+	*/
+	private static function getTypeExport($widgetType=''){
+		//$folder=strtoupper($this->widgetType);
+		$folder=strtoupper($widgetType);
+		if ($folder=='DOWNLOAD'){
+			$folder_='tmp_download';
+		}elseif($folder=='CRONJOB'){
+			$folder_='tmp_cronjob';
+		}elseif($folder=='MAIL'){
+			$folder_='tmp_mail';
+		}else{
+			$folder_='tmp_mix';
+		};
+		return  $folder_;
 	}
 	
 	/**
@@ -79,27 +101,15 @@ class Postman4ExcelBehavior extends Behavior
 	* @since 1.0.0
 	*/
 	private function getFolder(){
-		$folder=strtoupper($this->widgetType);
-		if ($folder=='DOWNLOAD'){
-			$folder_='tmp_download';
-		}elseif($folder=='CRONJOB'){
-			$folder_='tmp_cronjob';
-		}elseif($folder=='MAIL'){
-			$folder_='tmp_mail';
-		}else{
-			$folder_='tmp_mix';
-		};
-		
-		$tempDir=$this->getPath().$folder_;
+		$folderType=self::getTypeExport($this->widgetType); //WidgetType
+		$tempDir=self::getPath($this->downloadPath).$folderType;
 		
 		if (!is_dir($tempDir)) {
-			if (!is_dir($folder_)) {
-				mkdir($folder_);
+			if (!is_dir($folderType)) {
+				mkdir($folderType);
 			}
 			mkdir($tempDir);
 			chmod($tempDir, 0755);
-			// the default implementation makes it under 777 permission, 
-			// which you could possibly change recursively before deployment, but here's less of a headache in case you don't
 			return $tempDir.'/';
 		}else{
 			return $tempDir.'/';
@@ -151,12 +161,12 @@ class Postman4ExcelBehavior extends Behavior
      * @return bool|string
      * @throws Exception
      */
-    public function save2Excel($excel_content, $excel_file
+    public function save4Excel($excel_content, $excel_file
         , $excel_props = array('creator' => 'WWSP Tool'
         , 'title' => 'WWSP_Tracking EXPORT EXCEL'
         , 'subject' => 'WWSP_Tracking EXPORT EXCEL'
         , 'desc' => 'WWSP_Tracking EXPORT EXCEL'
-        , 'keywords' => 'WWSP Tool Generated Excel, Author: Scott Huang'
+        , 'keywords' => 'WWSP Tool Generated Excel, Author: ptrnov'
         , 'category' => 'WWSP_Tracking EXPORT EXCEL'))
     {
         if (!is_array($excel_content)) {
@@ -191,26 +201,41 @@ class Postman4ExcelBehavior extends Behavior
         );
         $style_obj->applyFromArray($style_array);
 
-//开始执行EXCEL数据导出
+
         //start export excel
         for ($i = 0; $i < count($excel_content); $i++) {
             $each_sheet_content = $excel_content[$i];
             if ($i == 0) {
-//默认会创建一个sheet页，故不需在创建
+
                 //There will be a default sheet, so no need create
                 $objPHPExcel->setActiveSheetIndex(intval(0));
                 $current_sheet = $objPHPExcel->getActiveSheet();
             } else {
-//创建sheet
+
                 //create sheet
                 $objPHPExcel->createSheet();
                 $current_sheet = $objPHPExcel->getSheet($i);
             }
-//设置sheet title
+			
+			//update@ptrnov
+			if (array_key_exists('ceils_start_rows', $each_sheet_content) && !empty($each_sheet_content['ceils_start_rows'])) {
+                //$current_sheet->ceils_start_rows($each_sheet_content['ceils_start_rows']);
+				//Manipulation row and header position 
+				$StartRowValContent=$each_sheet_content['ceils_start_rows'];
+				if ($StartRowValContent<=1 or $StartRowValContent>2){
+					$StartRowValueContent=2; //default
+				}elseif($StartRowValContent=2){
+					$StartRowValueContent=3; //row 3
+				}
+            }else{
+				$StartRowValueContent=2; //default
+			}
+			
+			
             //set title
             $current_sheet->setTitle(str_replace(array('/', '*', '?', '\\', ':', '[', ']'), array('_', '_', '_', '_', '_', '_', '_'), substr($each_sheet_content['sheet_name'], 0, 30))); //add by Scott
             $current_sheet->getColumnDimension()->setAutoSize(true); //Scott, set column autosize
-//设置sheet当前页的标题
+
             //set sheet's current title
             $_columnIndex = 'A';
 
@@ -252,14 +277,12 @@ class Postman4ExcelBehavior extends Behavior
             if (array_key_exists('freezePane', $each_sheet_content) && !empty($each_sheet_content['freezePane'])) {
                 $current_sheet->freezePane($each_sheet_content['freezePane']);
             }
-//写入sheet页面内容
+
             //write sheet content
-			$StartRowValContent=$each_sheet_content['ceils_start_rows'];
-			$StartRowValueContent=$StartRowValContent!=''?$StartRowValContent:2; //author@ptr.nov
             if (array_key_exists('ceils', $each_sheet_content) && !empty($each_sheet_content['ceils'])) {
                 for ($row = 0; $row < count($each_sheet_content['ceils']); $row++) {
                     //setting row css
-                    $lineRange = "A" . ($row + $StartRowValueContent) . ":" . self::excelColumnName(count($each_sheet_content['ceils'][$row])) . ($row + $StartRowValueContent); //@ptr.nov - $StartRowValueContent -> mulai rows nilai data warna
+                    $lineRange = "A" . ($row + $StartRowValueContent) . ":" . self::excelColumnName(count($each_sheet_content['ceils'][$row])) . ($row + $StartRowValueContent); //update@ptr.nov - $StartRowValueContent -> mulai rows nilai data warna
                     if (($row + 1) % 2 == 1 and isset($each_sheet_content["oddCssClass"])) {
                         if ($each_sheet_content["oddCssClass"]["color"])
                             $current_sheet->getStyle($lineRange)->getFont()->getColor()->setARGB($each_sheet_content["oddCssClass"]["color"]);
@@ -280,31 +303,29 @@ class Postman4ExcelBehavior extends Behavior
                     }
                     //write content
                     for ($l = 0; $l < count($each_sheet_content['ceils'][$row]); $l++) {
-                        $current_sheet->setCellValueByColumnAndRow($l, $row + $StartRowValueContent, $each_sheet_content['ceils'][$row][$l]); //@ptr.nov - $StartRowValueContent -> mulai rows nilai data 
+                        $current_sheet->setCellValueByColumnAndRow($l, $row + $StartRowValueContent, $each_sheet_content['ceils'][$row][$l]); //update@ptr.nov - $StartRowValueContent -> mulai rows nilai data 
                     }
                 }
             }
         }
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 		
-		$file_name = self::getFolder(). $excel_file. '.xlsx';
+		//Manipulation Name 
+		$widgetTypeAction=strtoupper($this->widgetType);
+		if ($widgetTypeAction=='DOWNLOAD' or $widgetTypeAction==''){
+			$fileManipulation = ($this->prefixStr ? $this->prefixStr . '-' : '') . 
+								str_replace(array('/', '*', '?', '\\', ':', '[', ']'), array('_', '_', '_', '_', '_', '_', '_'), $excel_file) .
+								($this->suffixStr ? '-' . $this->suffixStr : '-' . date('Ymd-His'));
+		}else{
+			$fileManipulation=$excel_file;
+		}
+		
+		$file_name = self::getFolder(). $fileManipulation. '.xlsx';
 			
-			/* 
-			$file_name = $tempDir .
-			//            yii::$app->user->identity->username . '-' .  //hide this line , you can turn on by yourself.
-            ($this->prefixStr ? $this->prefixStr . '-' : '') .
-            str_replace(array('/', '*', '?', '\\', ':', '[', ']'), array('_', '_', '_', '_', '_', '_', '_'), $excel_file) .
-            ($this->suffixStr ? '-' . $this->suffixStr : '-' . date('Ymd-His')) .
-			//            '-' . date('Ymd-His').
-            '.xlsx'; 
-			*/
+		
 
-        $objWriter->save($file_name);
-        return $file_name;
-//        if (!file_exists($file_name)) {
-//            self::setMsg("Error", "File not exist");
-//            return false;
-//        }
+        $objWriter->save($file_name);     
+		return $file_name;    
     }
 
 
@@ -351,12 +372,12 @@ class Postman4ExcelBehavior extends Behavior
      * @param array $excel_props
      * @return bool
      */
-    public function export2excel($excel_content, $excel_file,$pilih
+    public function export4excel($excel_content, $excel_file
         , $excel_props = array('creator' => 'WWSP Tool'
         , 'title' => 'WWSP_Tracking EXPORT EXCEL'
         , 'subject' => 'WWSP_Tracking EXPORT EXCEL'
         , 'desc' => 'WWSP_Tracking EXPORT EXCEL'
-        , 'keywords' => 'WWSP Tool Generated Excel, Author: Scott Huang'
+        , 'keywords' => 'Author: ptrnov'
         , 'category' => 'WWSP_Tracking EXPORT EXCEL'))
     {
         if (!is_array($excel_content)) {
@@ -365,41 +386,35 @@ class Postman4ExcelBehavior extends Behavior
         if (empty($excel_file)) {
             return FALSE;
         }
-        $excelName = self::save2Excel($excel_content, $excel_file, $excel_props);
-		/*
-		 * Penambahan parameter variable $pilih
-		 * 1= untuk View download
-		 * 0= untuk console command line linux
-		 */
-		if ($pilih==1){		
-			/*
-			 * Link View download 
-			 * 
-			*/
-			if ($excelName) {
-				return $this->owner->redirect([Url::to('download'), "file_name" => basename($excelName)
-					, "file_type" => 'excel'
-					, 'deleteAfterDownload' => true]);
-			}
-		}else{		
-			$deleteAfterDownload=true;
-			$file_name=basename($excelName);
-			
+		
+		/*Save File return path+nameFile.extention*/
+        $excelName = self::save4Excel($excel_content, $excel_file, $excel_props);
+		
+		//open file exciute
+		$widgetTypeAction=strtoupper($this->widgetType);
+		if ($widgetTypeAction=='DOWNLOAD'){
+			$file_type='excel';
+			//$file_type='image';
+			return self::openDataFile($excelName,$file_type,true);
+		}elseif ($widgetTypeAction==''){
+			$file_type='excel';
+			//$file_type='image';
+			return self::openDataFile($excelName,$file_type,false);
+		}
+    }
+
+	
+	/**
+	* Open download file GUI View Browser
+	* @author ptrnov [ptr.nov@gmail.com]
+	* @since 1.0.0
+	*/
+	private static function openDataFile($file_name='',$file_type='excel',$deleteAfterDownload=false){
+			//$file_name=basename($file_name);
 			if (empty($file_name)) {
-				//return $this->goBack();
 				return 0;
 			}
-			//print_r($file_name);
-			
-			//die();
-			//$baseRoot=Yii::getAlias('@vendor').'/ptrnov/yii2-postman4excel/';
-			$baseRoot=self::getPath();
-			//$baseRoot=dirname(dirname(__DIR__)).'/cronjob/';
-			//$baseRoot = Yii::getAlias('@webroot') . "/uploads/";
-			$file_name = $baseRoot . $file_name;
-			//echo $file_name,"<BR/>";
 			if (!file_exists($file_name)) {
-				//HzlUtil::setMsg("Error", "File not exist");
 				return 0;
 			}
 			$fp = fopen($file_name, "r");
@@ -415,7 +430,7 @@ class Postman4ExcelBehavior extends Behavior
 				Header("Content-Disposition: attachment; filename=" . basename($file_name));
 				header('Content-Transfer-Encoding: binary');
 				Header("Content-Length:" . $file_size);
-			} else if ($file_type == 'picture') { //pictures
+			} else if ($file_type == 'image') { //pictures
 				Header("Content-Type:image/jpeg");
 				Header("Accept-Ranges: bytes");
 				Header("Content-Disposition: attachment; filename=" . basename($file_name));
@@ -439,11 +454,8 @@ class Postman4ExcelBehavior extends Behavior
 			fclose($fp);
 			if ($deleteAfterDownload) {
 				
-				//unlink($file_name);
+				unlink($file_name);
 			}
 			return 1;
-		
-		}
-    }
-
+	}
 }

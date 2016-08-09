@@ -1,5 +1,6 @@
 Postman Excel for Yii 2
 =======================
+Base On scotthuangzl (ptrnov update)
 
 Postman Excel Export for view or console cronjobs
 
@@ -29,28 +30,21 @@ Usage
 Once the extension is installed, simply use it in your code by  :
 
 ```php
-use ptrnov\postman4excel\Postman4ExcelBehavior;
-```
-
-class YourControllerController extends Controller
-{
-	public function behaviors()
-    {
-        return [
-			//Postman4ExcelBehavior::className(),
-			'export4excel' => [
+	use ptrnov\postman4excel\Postman4ExcelBehavior;
+	public function behaviors(){
+			'export2excel' => [
 				'class' => Postman4ExcelBehavior::className(),
-			], 
-			'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['post'],
-                ],
-            ]
-        ];
-    }
-	
-	public function actionTestExport1()
+				'downloadPath'=>'your path'		//defult "/vendor/ptrnov/yii2-postman4excel/tmp/", Ecample Windows path "d:/folder/"
+				'widgetType'=>'download' 		//download web browser, delete before download, tmp_download
+				//'widgetType'=>'cronjob' 	 	//console method, folder tmp_cronjob
+				//'widgetType'=>'mail'		 	//posman mail, folder tmp_mail
+				//'widgetType'=>''	 			//Empty same download, file  stay on folder "tmp_mix"
+				//'prefixStr' => yii::$app->user->identity->username,
+				//'suffixStr' => date('Ymd-His'),
+			],
+	}
+	// localhost/yourController/test-export
+	public function actionTestExport()
     {
 		//get data from database
 		$sqlDataProvider= new ArrayDataProvider([
@@ -62,7 +56,7 @@ class YourControllerController extends Controller
 		
 		/*Array Model Data*/
 		$excel_dataAll = Postman4ExcelBehavior::excelDataFormat($arySqlDataProvider);
-		//$excel_title = $excel_dataNKA['excel_title'];
+		//$excel_title = $excel_dataAll['excel_title'];
 		$excel_ceilsAll = $excel_dataAll['excel_ceils'];
 		
 		
@@ -71,18 +65,12 @@ class YourControllerController extends Controller
 		//path of windows, example "d:/folder/"; folder nama should be exist in path
 		$this->downloadPath = ''; //'d:/tools/
 		
-		//Widget Type set for download or cronjob or mail else mix
-		//widgetType=download
-		//widgetType=cronjob
-		//widgetType=mail
-		$this->widgetType='cronjob';
-		
 		$excel_content = [
 			[
 				'sheet_name' => 'TEST EXPORT 1',
                 'sheet_title' => ['ID','USERNAME'],
 			    'ceils' => $excel_ceilsAll,
-				'ceils_start_rows'=>1,
+				'ceils_start_rows'=>2, // header 1 or 2
                 //'freezePane' => 'E2',
                 'headerColor' => Postman4ExcelBehavior::getCssClass("header"),
                 'headerColumnCssClass' => [
@@ -94,7 +82,8 @@ class YourControllerController extends Controller
 			],
 		];
 		
-		$excel_file = "TestExport";
-		$this->export2excel($excel_content, $excel_file,0); 	
+		$excelFile = "TestExport";
+		$this->export4excel($excel_content, $excelFile); 	
     }
-}
+```
+
