@@ -2,7 +2,7 @@ Postman Excel for Yii 2
 =======================
 Base On scotthuangzl (ptrnov update)
 
-Postman Excel Export for view or console cronjobs
+Postman Excel Export for view or console cronjobs, mail postman
 
 Installation
 ------------
