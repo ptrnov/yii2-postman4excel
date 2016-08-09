@@ -102,7 +102,7 @@ class Postman4ExcelBehavior extends Behavior
 			// which you could possibly change recursively before deployment, but here's less of a headache in case you don't
 			return $tempDir.'/';
 		}else{
-			throw new Exception("Invalid path");
+			return $tempDir.'/';
 		}
 	}
 		
@@ -377,17 +377,21 @@ class Postman4ExcelBehavior extends Behavior
 			 * 
 			*/
 			if ($excelName) {
-				return $this->owner->redirect([Url::to('download'), "file_name" => 'temp/' . basename($excelName)
+				return $this->owner->redirect([Url::to('download'), "file_name" => basename($excelName)
 					, "file_type" => 'excel'
 					, 'deleteAfterDownload' => true]);
 			}
 		}else{		
 			$deleteAfterDownload=true;
-			$file_name='temp/' . basename($excelName);
+			$file_name=basename($excelName);
+			
 			if (empty($file_name)) {
 				//return $this->goBack();
 				return 0;
 			}
+			//print_r($file_name);
+			
+			//die();
 			//$baseRoot=Yii::getAlias('@vendor').'/ptrnov/yii2-postman4excel/';
 			$baseRoot=self::getPath();
 			//$baseRoot=dirname(dirname(__DIR__)).'/cronjob/';

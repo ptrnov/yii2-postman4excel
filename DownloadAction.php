@@ -19,7 +19,7 @@ class DownloadAction extends Action
 		$baseRoot=Yii::getAlias('@vendor').'/ptrnov/yii2-postman4excel/tmp';
 		//$baseRoot=dirname(dirname(__DIR__)).'/cronjob/';
         //$baseRoot = Yii::getAlias('@webroot') . "/uploads/";
-        $file_name = $baseRoot . $file_name;
+       // $file_name = $baseRoot . $file_name;
         //echo $file_name,"<BR/>";
         if (!file_exists($file_name)) {
             //HzlUtil::setMsg("Error", "File not exist");
