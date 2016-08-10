@@ -223,12 +223,16 @@ class Postman4ExcelBehavior extends Behavior
 				//Manipulation row and header position 
 				$StartRowValContent=$each_sheet_content['ceils_start_rows'];
 				if ($StartRowValContent<=1 or $StartRowValContent>2){
-					$StartRowValueContent=2; //default
+					$StartRowValueHeader=1; // Header default row1
+					$StartRowValueContent=2; //Content default row2				
 				}elseif($StartRowValContent=2){
+					$StartRowValueHeader=2; //Header row2
 					$StartRowValueContent=3; //row 3
+					
 				}
             }else{
-				$StartRowValueContent=2; //default
+				$StartRowValueHeader=1; //Header default row1
+				$StartRowValueContent=2; //Content default  row2	
 			}
 			
 			
@@ -239,7 +243,8 @@ class Postman4ExcelBehavior extends Behavior
             //set sheet's current title
             $_columnIndex = 'A';
 
-            $lineRange = "A1:" . self::excelColumnName(count($each_sheet_content['sheet_title'])) . "1";
+           // $lineRange = "A1:" . self::excelColumnName(count($each_sheet_content['sheet_title'])) . "1"; 			//A1=>A1, 1=2
+            $lineRange = "A" . $StartRowValueHeader . ":" . self::excelColumnName(count($each_sheet_content['sheet_title'])) . $StartRowValueHeader; //A1=>A1, 1=2
             $current_sheet->setSharedStyle($style_obj, $lineRange);
 
             if (array_key_exists('sheet_title', $each_sheet_content) && !empty($each_sheet_content['sheet_title'])) {
@@ -255,12 +260,14 @@ class Postman4ExcelBehavior extends Behavior
                 }
 
                 for ($j = 0; $j < count($each_sheet_content['sheet_title']); $j++) {
-                    $current_sheet->setCellValueByColumnAndRow($j, 1, $each_sheet_content['sheet_title'][$j]);
+                    //$current_sheet->setCellValueByColumnAndRow($j, 1, $each_sheet_content['sheet_title'][$j]); 					//1=2
+                    $current_sheet->setCellValueByColumnAndRow($j, $StartRowValueHeader, $each_sheet_content['sheet_title'][$j]); 	//1=2
                     //start handle hearder column css
                     if (array_key_exists('headerColumnCssClass', $each_sheet_content)) {
                         if (isset($each_sheet_content["headerColumnCssClass"][$each_sheet_content['sheet_title'][$j]])) {
                             $tempStyle = $each_sheet_content["headerColumnCssClass"][$each_sheet_content['sheet_title'][$j]];
-                            $tempColumn = self::excelColumnName($j + 1) . "1";
+                            //$tempColumn = self::excelColumnName($j + 1) . "1";
+                            $tempColumn = self::excelColumnName($j + 1) . $StartRowValueHeader;
                             if (isset($tempStyle["color"]) and $tempStyle['color'])
                                 $current_sheet->getStyle($tempColumn)->getFont()->getColor()->setARGB($tempStyle['color']);
                             //background
