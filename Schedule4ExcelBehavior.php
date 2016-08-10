@@ -23,7 +23,7 @@ use \PHPExcel_Style_Border;
  * @since 1.0.0
  * @state Indonesia
  */
-class Postman4ExcelBehavior extends Behavior
+class Schedule4ExcelBehavior extends Behavior
 {	
 	 /**
      * @var string  you can set use logged username , it will add in the file as prefix
