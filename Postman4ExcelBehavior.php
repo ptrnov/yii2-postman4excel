@@ -303,11 +303,18 @@ class Postman4ExcelBehavior extends Behavior
 											$current_sheet->getStyle($tempColumn)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 										}
 									}
-									//background
-									// if (isset($tempStyle["background"]) and $tempStyle['background']) {
-										// $current_sheet->getStyle($tempColumn)->getFill()->getStartColor()->setRGB($tempStyle["background"]);
-										// $current_sheet->getStyle($tempColumn)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-									// }  
+									
+									 //font color
+									if (isset($tempStyle["color-font"]) and $tempStyle['color-font']){
+										$current_sheet->getStyle($tempColumn)->getFont()->getColor()->setARGB($tempStyle['color-font']);
+									}
+										
+									//color background
+									if (isset($tempStyle["color-background"]) and $tempStyle['color-background']) {
+										$current_sheet->getStyle($tempColumn)->getFill()->getStartColor()->setRGB($tempStyle["color-background"]);
+										$current_sheet->getStyle($tempColumn)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+									} 
+									
 								}
 							}						
 						}							

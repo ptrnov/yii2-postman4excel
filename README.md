@@ -102,7 +102,9 @@ Once the extension is installed, simply use it in your code by  :
 			    'ceils' => $excel_ceilsAll,
 				//'freezePane' => 'E2',
                 'headerColor' => Postman4ExcelBehavior::getCssClass("header"),	//All Header Color font and Backgroud
-                'headerColumnCssClass' => [
+               
+			    //Deafault Header properties
+				'headerColumnCssClass' => [
 					  [
 						'id' => Postman4ExcelBehavior::getCssClass('red'),
 						'username' => Postman4ExcelBehavior::getCssClass('green'),
@@ -113,17 +115,19 @@ Once the extension is installed, simply use it in your code by  :
 					 ]             
                              
                 ],
+				//customize Header properties
+				/*
 				'headerStyle' => [
-					  [
-						'id' => ['align'=>'CENTER'],
-						'username' => ['align'=>'left'],
-					 ],
-					 [
-						 'ID' =>  ['align'=>'right'],
-						 'USERNAME' =>  ['align'=>'right'],				 
-					 ]             
-                             
+					[
+						'id' => ['align'=>'CENTER','color-font'=>'0000FF','color-background'=>'FFCCCC'],
+						'username' => ['align'=>'left','color-font'=>'FF0000','color-background'=>'CCFF99'],
+					],
+					[
+						 'ID' =>  ['align'=>'right','color-font'=>'0000FF','color-background'=>'CCFFCC'],
+						 'USERNAME' =>  ['align'=>'right','color-font'=>'000000','color-background'=>'FFFF99'],				 
+					]                              
                 ],  
+				*/
                'oddCssClass' => Postman4ExcelBehavior::getCssClass("odd"),
                'evenCssClass' => Postman4ExcelBehavior::getCssClass("even"),
 			],

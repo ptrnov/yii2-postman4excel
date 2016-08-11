@@ -7,7 +7,7 @@ Change Log: `yii2-postman4excel`
 2. ceils_start_rows = change on sheet_title
 3. sheet_title = [array1,array2,array3, etc..]
 4. headerColumnCssClass =[[array1],[array1],[array3],[etc..]];
-5. headerStyle = property colum header
+5. headerStyle = property colum header align,color-font,color-background
 
 ## Version 2.0.1
 **Date:** 2016-08-10
