@@ -56,22 +56,29 @@ Once the extension is installed, simply use it in your code by  :
 		
 		/*Array Model Data*/
 		$excel_dataAll = Postman4ExcelBehavior::excelDataFormat($arySqlDataProvider);
-		//$excel_title = $excel_dataAll['excel_title'];
 		$excel_ceilsAll = $excel_dataAll['excel_ceils'];
+		$excel_title1 = $excel_dataAll['excel_title'];
+		$excel_title2 = ['ID','USERNAME'];
 		
+		//Tite Header From Table Name
+		//$excel_title = $excel_dataAll['excel_title'];
 		
-		//Path for Export The Data
-		//default path is empty:(Yii::getAlias('@vendor').'/ptrnov/yii2-postman4excel/tmp');
-		//path of windows, example "d:/folder/"; folder nama should be exist in path
-		$this->downloadPath = ''; //'d:/tools/
+		//Tite Header From Modify byself
+		//$excel_title = ['ID','USERNAME']
+				
+		//Note 'sheet_title'
+		//old version : 'sheet_title' => $excel_title,
+		//new Version : 'sheet_title' => [$excel_title1,$excel_title2,$excel_title3, dst],
+		
 		
 		$excel_content = [
 			[
 				'sheet_name' => 'TEST EXPORT 1',
-                'sheet_title' => ['ID','USERNAME'],
+                'sheet_title' => $excel_title1, 					//old version
+                //'sheet_title' => [$excel_title1], 				//new version
+                //'sheet_title' => [$excel_title1,$excel_title2], 	//new version				
 			    'ceils' => $excel_ceilsAll,
-				'ceils_start_rows'=>2, // header 1 or 2
-                //'freezePane' => 'E2',
+				//'freezePane' => 'E2',
                 'headerColor' => Postman4ExcelBehavior::getCssClass("header"),
                 'headerColumnCssClass' => [
 					 'id' => Postman4ExcelBehavior::getCssClass('header'),
