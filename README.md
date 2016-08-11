@@ -116,6 +116,7 @@ Once the extension is installed, simply use it in your code by  :
                              
                 ],
 				//customize Header properties
+				// Color Ref: http://dmcritchie.mvps.org/excel/colors.htm
 				/*
 				'headerStyle' => [
 					[
