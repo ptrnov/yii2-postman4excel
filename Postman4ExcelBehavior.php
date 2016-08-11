@@ -212,40 +212,45 @@ class Postman4ExcelBehavior extends Behavior
             $current_sheet->setTitle(str_replace(array('/', '*', '?', '\\', ':', '[', ']'), array('_', '_', '_', '_', '_', '_', '_'), substr($each_sheet_content['sheet_name'], 0, 30))); //add by Scott
             $current_sheet->getColumnDimension()->setAutoSize(true); //Scott, set column autosize
             //set sheet's current title
-            $_columnIndex = 'A';			
+            $_columnIndex = 'A';
+			
 			
 			/*
 			* --HEADER sheet_title
 			*/
 			if (array_key_exists('sheet_title', $each_sheet_content) && !empty($each_sheet_content['sheet_title'])) {
-				if(self::is_multidim_array($each_sheet_content['sheet_title'])==true){ //validation  array multi
-					/*
-					* MULTI ARRAY - new version 
-					* 'sheet_title' =>[$excel_title1], 
-					* @author ptrnov [ptr.nov@gmail.com]
-					* @since 1.1.0
-					*/
+				/*
+				* MULTI ARRAY - new version 
+				* 'sheet_title' =>[$excel_title1], 
+				* @author ptrnov [ptr.nov@gmail.com]
+				* @since 1.1.0
+				*/
+				if(self::is_multidim_array($each_sheet_content['sheet_title'])==true){ //validation  array multi					
 					//print_r(count($each_sheet_content['sheet_title']));
 					$cnt_sheet_title = count($each_sheet_content['sheet_title']); // count rows of header title 
-					$startRowContent=$cnt_sheet_title+1; // start rows of ceils content 					
+					$startRowContent=$cnt_sheet_title+1; // start rows of ceils content 								
 					
 					//sheet_title -> one or more header state
 					for ($y = 0; $y < $cnt_sheet_title; $y++) { //Count Array sheet_title
 						//print_r([count($each_sheet_content['sheet_title'][$y])]);					
 						for ($x = 0; $x < count($each_sheet_content['sheet_title'][$y]); $x++) { //Count sub Array sheet_title by [$y]
+							//Header data value- sheet_title value and state position
 							//$current_sheet->setCellValueByColumnAndRow($j, 1, $each_sheet_content['sheet_title'][$j]);				//old
-							//$lineRange = "A" . $y. ":" . self::excelColumnName(count($each_sheet_content['sheet_title'][$y][$x])) . $y; //add sub Array | $y=row title
-							//$current_sheet->setSharedStyle($style_obj, $lineRange); //set php excel
-							//Header data value
-							
-							//$lineRange = "A1:" . self::excelColumnName(count($each_sheet_content['sheet_title'][$y][$x])) . count($each_sheet_content['sheet_title']);
-							//$current_sheet->setSharedStyle($style_obj, $lineRange);
-							
-							
-							
 							$current_sheet->setCellValueByColumnAndRow($x, $y+1, $each_sheet_content['sheet_title'][$y][$x]);	//put value on [startCrm, row=$y+1; Endcolumn).			
-							
-							
+														
+							//$lineRange = "A1:" . "B" . '2'; //state range [col.row:col.row ]									
+							$lineRange = "A" . ($y+1) . ":" . self::excelColumnName(count($each_sheet_content['sheet_title'][$y])) . ($y+1);
+							$current_sheet->setSharedStyle($style_obj, $lineRange);
+						
+							if (array_key_exists('headerColor', $each_sheet_content) && is_array($each_sheet_content['headerColor']) and !empty($each_sheet_content['headerColor'])) {
+								if (isset($each_sheet_content['headerColor']["color"]) and $each_sheet_content['headerColor']['color'])
+									$current_sheet->getStyle($lineRange)->getFont()->getColor()->setARGB($each_sheet_content['headerColor']['color']);
+								//background
+								if (isset($each_sheet_content['headerColor']["background"]) and $each_sheet_content['headerColor']['background']) {
+									$current_sheet->getStyle($lineRange)->getFill()->getStartColor()->setRGB($each_sheet_content['headerColor']["background"]);
+									$current_sheet->getStyle($lineRange)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+								}
+							}	
 							
 							
 							//start handle hearder column css
@@ -278,8 +283,10 @@ class Postman4ExcelBehavior extends Behavior
 					/*
 					* SINGLE ARRAY - old  version 
 					* 'sheet_title' =>$excel_title1, 
-					* @author ptrnov [ptr.nov@gmail.com]
+					* @author scotthuangzl - Scott Huang [zhiliang.huang@gmail.com]
 					* @since 1.0.0
+					* @update ptrnov [ptr.nov@gmail.com]
+					* @since 1.0.1
 					*/
 					$startRowContent=2;
 					$lineRange = "A1:" . self::excelColumnName(count($each_sheet_content['sheet_title'])) . "1";
@@ -525,6 +532,7 @@ class Postman4ExcelBehavior extends Behavior
 	* Example: $excel_title = ['ID','USERNAME','TEST1','TEST2','TEST3','TEST4'];
 	* 'sheet_title' =>$excel_title 			// is single Array
 	* 'sheet_title' =>[$excel_title]		// is Multi-dimensional arrays
+	* http://stackoverflow.com/questions/9678290/check-if-an-array-is-multi-dimensional
 	*/
 	private static function is_multidim_array($arr) {
 	  if (!is_array($arr))

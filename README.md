@@ -79,7 +79,7 @@ Once the extension is installed, simply use it in your code by  :
                 //'sheet_title' => [$excel_title1,$excel_title2], 	//new version				
 			    'ceils' => $excel_ceilsAll,
 				//'freezePane' => 'E2',
-                'headerColor' => Postman4ExcelBehavior::getCssClass("header"),
+                'headerColor' => Postman4ExcelBehavior::getCssClass("header"),	//All Header Color font and Backgroud
                 'headerColumnCssClass' => [
 					 'id' => Postman4ExcelBehavior::getCssClass('header'),
                      'username' => Postman4ExcelBehavior::getCssClass('header'),                   
