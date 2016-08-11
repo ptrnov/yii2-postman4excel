@@ -74,19 +74,49 @@ Once the extension is installed, simply use it in your code by  :
 		$excel_content = [
 			[
 				'sheet_name' => 'TEST EXPORT 1',
-                'sheet_title' => $excel_title1, 					//old version
+                //'sheet_title' => $excel_title1, 					//old version
                 //'sheet_title' => [$excel_title1], 				//new version
-                //'sheet_title' => [$excel_title1,$excel_title2], 	//new version				
+                'sheet_title' => [$excel_title1,$excel_title2], 	//new version				
 			    'ceils' => $excel_ceilsAll,
 				//'freezePane' => 'E2',
                 'headerColor' => Postman4ExcelBehavior::getCssClass("header"),	//All Header Color font and Backgroud
                 'headerColumnCssClass' => [
-					 'id' => Postman4ExcelBehavior::getCssClass('header'),
-                     'username' => Postman4ExcelBehavior::getCssClass('header'),                   
-                ], 
+					  [
+						'id' => Postman4ExcelBehavior::getCssClass('yellow'),
+						'username' => Postman4ExcelBehavior::getCssClass('green'),
+					 ],
+					 [
+						 'ID' => Postman4ExcelBehavior::getCssClass('red'),  
+						 'USERNAME' => Postman4ExcelBehavior::getCssClass('green'), 						 
+					 ]             
+                             
+                ],
                'oddCssClass' => Postman4ExcelBehavior::getCssClass("odd"),
                'evenCssClass' => Postman4ExcelBehavior::getCssClass("even"),
 			],
+			[
+				'sheet_name' => 'TEST EXPORT 2',
+                //'sheet_title' => $excel_title1, 					//old version
+                //'sheet_title' => [$excel_title1], 				//new version
+                'sheet_title' => [$excel_title1,$excel_title2], 	//new version				
+			    'ceils' => $excel_ceilsAll,
+				//'freezePane' => 'E2',
+                'headerColor' => Postman4ExcelBehavior::getCssClass("header"),	//All Header Color font and Backgroud
+                'headerColumnCssClass' => [
+					  [
+						'id' => Postman4ExcelBehavior::getCssClass('red'),
+						'username' => Postman4ExcelBehavior::getCssClass('green'),
+					 ],
+					 [
+						 'ID' => Postman4ExcelBehavior::getCssClass('red'),  
+						 'USERNAME' => Postman4ExcelBehavior::getCssClass('green'), 						 
+					 ]             
+                             
+                ],
+               'oddCssClass' => Postman4ExcelBehavior::getCssClass("odd"),
+               'evenCssClass' => Postman4ExcelBehavior::getCssClass("even"),
+			],
+			
 		];
 		
 		$excelFile = "TestExport";

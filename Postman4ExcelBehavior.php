@@ -232,53 +232,55 @@ class Postman4ExcelBehavior extends Behavior
 					
 					//sheet_title -> one or more header state
 					for ($y = 0; $y < $cnt_sheet_title; $y++) { //Count Array sheet_title
-						//print_r([count($each_sheet_content['sheet_title'][$y])]);					
-						for ($x = 0; $x < count($each_sheet_content['sheet_title'][$y]); $x++) { //Count sub Array sheet_title by [$y]
-							//Header data value- sheet_title value and state position
-							//$current_sheet->setCellValueByColumnAndRow($j, 1, $each_sheet_content['sheet_title'][$j]);				//old
-							$current_sheet->setCellValueByColumnAndRow($x, $y+1, $each_sheet_content['sheet_title'][$y][$x]);	//put value on [startCrm, row=$y+1; Endcolumn).			
-														
-							//$lineRange = "A1:" . "B" . '2'; //state range [col.row:col.row ]									
-							$lineRange = "A" . ($y+1) . ":" . self::excelColumnName(count($each_sheet_content['sheet_title'][$y])) . ($y+1);
-							$current_sheet->setSharedStyle($style_obj, $lineRange);
-						
-							if (array_key_exists('headerColor', $each_sheet_content) && is_array($each_sheet_content['headerColor']) and !empty($each_sheet_content['headerColor'])) {
-								if (isset($each_sheet_content['headerColor']["color"]) and $each_sheet_content['headerColor']['color'])
-									$current_sheet->getStyle($lineRange)->getFont()->getColor()->setARGB($each_sheet_content['headerColor']['color']);
-								//background
-								if (isset($each_sheet_content['headerColor']["background"]) and $each_sheet_content['headerColor']['background']) {
-									$current_sheet->getStyle($lineRange)->getFill()->getStartColor()->setRGB($each_sheet_content['headerColor']["background"]);
-									$current_sheet->getStyle($lineRange)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+							//print_r([count($each_sheet_content['sheet_title'][$y])]);					
+							for ($x = 0; $x < count($each_sheet_content['sheet_title'][$y]); $x++) { //Count sub Array sheet_title by [$y]
+								//Header data value- sheet_title value and state position
+								//$current_sheet->setCellValueByColumnAndRow($j, 1, $each_sheet_content['sheet_title'][$j]);				//old
+								$current_sheet->setCellValueByColumnAndRow($x, $y+1, $each_sheet_content['sheet_title'][$y][$x]);	//put value on [startCrm, row=$y+1; Endcolumn).			
+															
+								//$lineRange = "A1:" . "B" . '2'; //state range [col.row:col.row ]									
+								$lineRange = "A" . ($y+1) . ":" . self::excelColumnName(count($each_sheet_content['sheet_title'][$y])) . ($y+1);
+								$current_sheet->setSharedStyle($style_obj, $lineRange);
+							
+								//header color All Column
+								if (array_key_exists('headerColor', $each_sheet_content) && is_array($each_sheet_content['headerColor']) and !empty($each_sheet_content['headerColor'])) {
+									if (isset($each_sheet_content['headerColor']["color"]) and $each_sheet_content['headerColor']['color'])
+										$current_sheet->getStyle($lineRange)->getFont()->getColor()->setARGB($each_sheet_content['headerColor']['color']);
+									//background
+									if (isset($each_sheet_content['headerColor']["background"]) and $each_sheet_content['headerColor']['background']) {
+										$current_sheet->getStyle($lineRange)->getFill()->getStartColor()->setRGB($each_sheet_content['headerColor']["background"]);
+										$current_sheet->getStyle($lineRange)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+									}
 								}
-							}	
-							
-							
+							}
+					}
+					
+					//header color Per Column
+					for ($y = 0; $y < $cnt_sheet_title; $y++) { //Count Array sheet_title
+						for ($x = 0; $x < count($each_sheet_content['sheet_title'][$y]); $x++) { //Count sub Array sheet_title by [$y]
 							//start handle hearder column css
-							/* if (array_key_exists('headerColumnCssClass', $each_sheet_content)) {
-								if (isset($each_sheet_content["headerColumnCssClass"][$each_sheet_content['sheet_title'][$y][$x]])) {
-									//array 
-									$tempStyle = $each_sheet_content["headerColumnCssClass"][$each_sheet_content['sheet_title'][$y][$x]];
-									$tempColumn = self::excelColumnName($x + 1) . "1";
+							if (array_key_exists('headerColumnCssClass', $each_sheet_content)) {
+								if (isset($each_sheet_content["headerColumnCssClass"][$y][$each_sheet_content['sheet_title'][$y][$x]])) {
 									
-									//header color
-								
-							
-									//font color
+									//Compare Array headerColumnCssClass and Array sheet_title
+									$tempStyle = $each_sheet_content["headerColumnCssClass"][$y][$each_sheet_content['sheet_title'][$y][$x]];
+									$tempColumn= self::excelColumnName($x+1) . ($y+1); //State range [[0]=>A1,[1]=>B1]									
+									
+									 //font color
 									if (isset($tempStyle["color"]) and $tempStyle['color'])
 										$current_sheet->getStyle($tempColumn)->getFont()->getColor()->setARGB($tempStyle['color']);
 									//background
 									if (isset($tempStyle["background"]) and $tempStyle['background']) {
 										$current_sheet->getStyle($tempColumn)->getFill()->getStartColor()->setRGB($tempStyle["background"]);
 										$current_sheet->getStyle($tempColumn)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-									}
+									}  
 								}
-							}			 */		
-							
-							
-							$current_sheet->getColumnDimension($_columnIndex)->setAutoSize(true);
-							$_columnIndex++;
-						}
+							}						
+						}							
 					}
+					$current_sheet->getColumnDimension($_columnIndex)->setAutoSize(true);
+					$_columnIndex++;
+				
 				}else{
 					/*
 					* SINGLE ARRAY - old  version 
@@ -310,8 +312,8 @@ class Postman4ExcelBehavior extends Behavior
 							
 							//start handle hearder column css,color font & background
 							if (array_key_exists('headerColumnCssClass', $each_sheet_content)) {
-								if (isset($each_sheet_content["headerColumnCssClass"][$each_sheet_content['sheet_title'][$j]])) {
-									$tempStyle = $each_sheet_content["headerColumnCssClass"][$each_sheet_content['sheet_title'][$j]];
+								if (isset($each_sheet_content["headerColumnCssClass"][0][$each_sheet_content['sheet_title'][$j]])) {  	 //[0] array multi
+									$tempStyle = $each_sheet_content["headerColumnCssClass"][0][$each_sheet_content['sheet_title'][$j]]; //[0] array multi
 									$tempColumn = self::excelColumnName($j + 1) . "1";
 									if (isset($tempStyle["color"]) and $tempStyle['color'])
 										$current_sheet->getStyle($tempColumn)->getFont()->getColor()->setARGB($tempStyle['color']);
