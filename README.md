@@ -113,6 +113,17 @@ Once the extension is installed, simply use it in your code by  :
 					 ]             
                              
                 ],
+				'headerStyle' => [
+					  [
+						'id' => ['align'=>'CENTER'],
+						'username' => ['align'=>'left'],
+					 ],
+					 [
+						 'ID' =>  ['align'=>'right'],
+						 'USERNAME' =>  ['align'=>'right'],				 
+					 ]             
+                             
+                ],  
                'oddCssClass' => Postman4ExcelBehavior::getCssClass("odd"),
                'evenCssClass' => Postman4ExcelBehavior::getCssClass("even"),
 			],

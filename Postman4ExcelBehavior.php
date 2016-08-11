@@ -278,6 +278,46 @@ class Postman4ExcelBehavior extends Behavior
 							}						
 						}							
 					}
+					
+					//header Colomn Aligin
+					for ($y = 0; $y < $cnt_sheet_title; $y++) { //Count Array sheet_title
+						for ($x = 0; $x < count($each_sheet_content['sheet_title'][$y]); $x++) { //Count sub Array sheet_title by [$y]
+							//start handle hearder column css
+							if (array_key_exists('headerStyle', $each_sheet_content)) {
+								if (isset($each_sheet_content["headerStyle"][$y][$each_sheet_content['sheet_title'][$y][$x]])) {
+									
+									//Compare Array headerColumnCssClass and Array sheet_title
+									$tempStyle = $each_sheet_content["headerStyle"][$y][$each_sheet_content['sheet_title'][$y][$x]];
+									$tempColumn= self::excelColumnName($x+1) . ($y+1); //State range [[0]=>A1,[1]=>B1]									
+									
+									 //align
+									if (isset($tempStyle["align"]) and $tempStyle['align']){
+										$getAligin=strtoupper($tempStyle["align"]);
+										if ($getAligin=='LEFT'){
+											$current_sheet->getStyle($tempColumn)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+										}elseif($getAligin=='CENTER'){
+											$current_sheet->getStyle($tempColumn)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+										}elseif($getAligin=='RIGHT'){
+											$current_sheet->getStyle($tempColumn)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+										}else{
+											$current_sheet->getStyle($tempColumn)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+										}
+									}
+									//background
+									// if (isset($tempStyle["background"]) and $tempStyle['background']) {
+										// $current_sheet->getStyle($tempColumn)->getFill()->getStartColor()->setRGB($tempStyle["background"]);
+										// $current_sheet->getStyle($tempColumn)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+									// }  
+								}
+							}						
+						}							
+					}
+					
+					
+					
+					
+					
+					
 					$current_sheet->getColumnDimension($_columnIndex)->setAutoSize(true);
 					$_columnIndex++;
 				
