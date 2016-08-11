@@ -2,6 +2,11 @@
 Change Log: `yii2-postman4excel`
 ===================================
 
+## Version 2.2.1
+**Date:** 2016-08-11
+1. (enh): containStyle (customize  contain property column align).. 
+
+
 ## Version 2.1.1
 **Date:** 2016-08-11
 1. (rem): ceils_start_rows  = remove. 

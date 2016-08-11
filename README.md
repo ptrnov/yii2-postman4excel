@@ -129,6 +129,23 @@ Once the extension is installed, simply use it in your code by  :
 					]                              
                 ],  
 				*/
+				//customize Content properties
+				// Content properties, validate on use last column title
+				'contentStyle' => [
+					  [
+						'id' => ['align'=>'left'],
+						'username' => ['align'=>'right'],
+					 ],
+					 [
+						 'ID' =>  ['align'=>'center'],
+						 'USERNAME' =>  ['align'=>'center'],				 
+					 ], 
+					// [
+					//	 'id' =>  ['align'=>'right'],
+					//	 'username' =>  ['align'=>'right'],				 
+					// ] 					 
+                             
+                ],  
                'oddCssClass' => Postman4ExcelBehavior::getCssClass("odd"),
                'evenCssClass' => Postman4ExcelBehavior::getCssClass("even"),
 			],

@@ -318,12 +318,7 @@ class Postman4ExcelBehavior extends Behavior
 								}
 							}						
 						}							
-					}
-					
-					
-					
-					
-					
+					}			
 					
 					$current_sheet->getColumnDimension($_columnIndex)->setAutoSize(true);
 					$_columnIndex++;
@@ -423,11 +418,62 @@ class Postman4ExcelBehavior extends Behavior
 					$_columnIndex++;
 					//all border content
 					$current_sheet->getStyle($lineRange)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-					//$current_sheet->getStyle('B1:B100')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-					$current_sheet->getStyle($lineRange)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+					$current_sheet->getStyle($lineRange)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+					//$current_sheet->getStyle('B1:B100')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);					
+					//$current_sheet->getStyle($lineRange)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 					//print_r($lineRange);
 					//die();					
                 }
+				for ($row = 0; $row < (count($each_sheet_content['ceils'])+1); $row++) {
+					if(isset($each_sheet_content['sheet_title'][0])){ // if not have sheet_title
+						$content_sheet_titleFirst = count($each_sheet_content['sheet_title']);
+						$content_sheet_title=$content_sheet_titleFirst==0?$content_sheet_titleFirst:$content_sheet_titleFirst-1;
+						$cnt_sheet_title_start = count($each_sheet_content['sheet_title']); // count rows of header title 
+						for ($col = 0; $col < count($each_sheet_content['sheet_title'][$content_sheet_title]); $col++) { //Count sub Array sheet_title by [$y]
+							if (array_key_exists('contentStyle', $each_sheet_content)) {
+								if (isset($each_sheet_content["contentStyle"][$content_sheet_title][$each_sheet_content['sheet_title'][$content_sheet_title][$col]])) {
+									$rowStart=$row==0?1:$row;
+									//Compare Array headerColumnCssClass and Array sheet_title
+									$tempStyleContent = $each_sheet_content["contentStyle"][$content_sheet_title][$each_sheet_content['sheet_title'][$content_sheet_title][$col]];									
+									$tempColumnContent= self::excelColumnName($col+1) . ($rowStart + $cnt_sheet_title_start); //State range [[0]=>A1,[1]=>B1]									
+									//$tempColumnContent[]= self::excelColumnName($col+1) . ($rowStart + $cnt_sheet_title_start); //State range [[0]=>A1,[1]=>B1]									
+									
+									 //align
+									if (isset($tempStyleContent["align"]) and $tempStyleContent['align']){
+										$getAliginContent=strtoupper($tempStyleContent["align"]);
+										if ($getAliginContent=='LEFT'){
+											$current_sheet->getStyle($tempColumnContent)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+										}elseif($getAliginContent=='CENTER'){
+											$current_sheet->getStyle($tempColumnContent)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+										}elseif($getAliginContent=='RIGHT'){
+											$current_sheet->getStyle($tempColumnContent)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+										}else{
+											$current_sheet->getStyle($tempColumnContent)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+										}
+									}
+									
+									//Next Update per cell checking (color-font,color-background)
+									//color background
+									/* if (isset($tempStyleContent["color-background"]) and $tempStyleContent['color-background']) {
+										$current_sheet->getStyle($tempColumnContent)->getFill()->getStartColor()->setRGB($tempStyle["color-background"]);
+										$current_sheet->getStyle($tempColumnContent)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+									}  */
+									
+									 //font color
+									/* if (isset($tempStyle["color-font"]) and $tempStyle['color-font']){
+										$current_sheet->getStyle($tempColumn)->getFont()->getColor()->setARGB($tempStyle['color-font']);
+									} */
+										
+									 
+									
+								}
+								// print_r($tempColumnContent);
+								// die();	
+							}
+								
+						}	
+					}				
+				}
             }
         }
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
