@@ -279,6 +279,8 @@ class Postman4ExcelBehavior extends Behavior
 						}							
 					}
 					
+					
+					
 					//header Colomn Aligin
 					for ($y = 0; $y < $cnt_sheet_title; $y++) { //Count Array sheet_title
 						for ($x = 0; $x < count($each_sheet_content['sheet_title'][$y]); $x++) { //Count sub Array sheet_title by [$y]
@@ -289,6 +291,16 @@ class Postman4ExcelBehavior extends Behavior
 									//Compare Array headerColumnCssClass and Array sheet_title
 									$tempStyle = $each_sheet_content["headerStyle"][$y][$each_sheet_content['sheet_title'][$y][$x]];
 									$tempColumn= self::excelColumnName($x+1) . ($y+1); //State range [[0]=>A1,[1]=>B1]									
+									
+									//color Merge
+									////$current_sheet->mergeCells('A1:B1');									
+									if (isset($tempStyle["merge"]) and $tempStyle['merge']) {
+										$mergeVal=explode(",", $tempStyle['merge']);
+										$colMerge=(isset($mergeVal[0]))?($mergeVal[0]=='' || $mergeVal[0]==0?($x+1):$mergeVal[0]):($x+1);									
+										$rowMerge=(isset($mergeVal[1]))?($mergeVal[1]==''?$y+1:$mergeVal[1]+1):($y+1);
+										$tempColumnMerge= self::excelColumnName($x+1) . ($y+1).":".self::excelColumnName($colMerge) . ($rowMerge);
+										$current_sheet->mergeCells($tempColumnMerge);										
+									} 
 									
 									 //align
 									if (isset($tempStyle["align"]) and $tempStyle['align']){
@@ -313,12 +325,13 @@ class Postman4ExcelBehavior extends Behavior
 									if (isset($tempStyle["color-background"]) and $tempStyle['color-background']) {
 										$current_sheet->getStyle($tempColumn)->getFill()->getStartColor()->setRGB($tempStyle["color-background"]);
 										$current_sheet->getStyle($tempColumn)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-									} 
+									} 			
 									
 								}
 							}						
 						}							
 					}			
+					
 					
 					$current_sheet->getColumnDimension($_columnIndex)->setAutoSize(true);
 					$_columnIndex++;

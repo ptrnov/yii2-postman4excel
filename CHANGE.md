@@ -2,6 +2,11 @@
 Change Log: `yii2-postman4excel`
 ===================================
 
+## Version 2.3.1
+**Date:** 2016-08-12
+1. (enh): headerStyle merge (mergeCells). merge(col,row)
+2.
+
 ## Version 2.2.1
 **Date:** 2016-08-11
 1. (enh): containStyle (customize  contain property column align).. 

@@ -121,7 +121,7 @@ Once the extension is installed, simply use it in your code by  :
 				'headerStyle' => [
 					[
 						'id' => ['align'=>'CENTER','color-font'=>'0000FF','color-background'=>'FFCCCC'],
-						'username' => ['align'=>'left','color-font'=>'FF0000','color-background'=>'CCFF99'],
+						'username' => ['align'=>'left','color-font'=>'FF0000','color-background'=>'CCFF99','merge'=>'2,1'], //'merge'=>'col,row'
 					],
 					[
 						 'ID' =>  ['align'=>'right','color-font'=>'0000FF','color-background'=>'CCFFCC'],
