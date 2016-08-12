@@ -137,8 +137,8 @@ Once the extension is installed, simply use it in your code by  :
 						'username' => ['align'=>'right'],
 					 ],
 					 [
-						 'ID' =>  ['align'=>'center'],
-						 'USERNAME' =>  ['align'=>'center'],				 
+						 'ID' =>  ['align'=>'center','color-font'=>'0000FF'],
+						 'USERNAME' =>  ['align'=>'center','color-font'=>'0000FF'],				 
 					 ], 
 					// [
 					//	 'id' =>  ['align'=>'right'],

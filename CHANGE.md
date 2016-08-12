@@ -5,7 +5,7 @@ Change Log: `yii2-postman4excel`
 ## Version 2.3.1
 **Date:** 2016-08-12
 1. (enh): headerStyle merge (mergeCells). merge(col,row)
-2.
+2. (enh): containStyle color-font
 
 ## Version 2.2.1
 **Date:** 2016-08-11

@@ -465,6 +465,11 @@ class Postman4ExcelBehavior extends Behavior
 										}
 									}
 									
+									 //font color
+									if (isset($tempStyleContent["color-font"]) and $tempStyleContent['color-font']){
+										$current_sheet->getStyle($tempColumnContent)->getFont()->getColor()->setARGB($tempStyleContent['color-font']);
+									}
+									
 									//Next Update per cell checking (color-font,color-background)
 									//color background
 									/* if (isset($tempStyleContent["color-background"]) and $tempStyleContent['color-background']) {
@@ -472,10 +477,7 @@ class Postman4ExcelBehavior extends Behavior
 										$current_sheet->getStyle($tempColumnContent)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
 									}  */
 									
-									 //font color
-									/* if (isset($tempStyle["color-font"]) and $tempStyle['color-font']){
-										$current_sheet->getStyle($tempColumn)->getFont()->getColor()->setARGB($tempStyle['color-font']);
-									} */
+									
 										
 									 
 									
