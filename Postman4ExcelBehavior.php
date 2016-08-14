@@ -21,7 +21,8 @@ use \PHPExcel_Style_Border;
  * @var string
  * base on scotthuangzl
  * @author ptrnov [ptr.nov@gmail.com]
- * @since 1.0.0
+ * @since 1.0.0 
+ * @last update 2.4.1
  * @state Indonesia
  */
 class Postman4ExcelBehavior extends Behavior
@@ -462,60 +463,61 @@ class Postman4ExcelBehavior extends Behavior
 					//die();					
                 }
 				for ($row = 0; $row < (count($each_sheet_content['ceils'])+1); $row++) {
-					if(isset($each_sheet_content['sheet_title'][0])){ // if not have sheet_title
+					//if(isset($each_sheet_content['sheet_title'][0])){ // if not have sheet_title -- next PR ptr.nov
 						$content_sheet_titleFirst = count($each_sheet_content['sheet_title']);
 						$content_sheet_title=$content_sheet_titleFirst==0?$content_sheet_titleFirst:$content_sheet_titleFirst-1;
 						$cnt_sheet_title_start = count($each_sheet_content['sheet_title']); // count rows of header title 
-						for ($col = 0; $col < count($each_sheet_content['sheet_title'][$content_sheet_title]); $col++) { //Count sub Array sheet_title by [$y]
-							if (array_key_exists('contentStyle', $each_sheet_content)) {
-								if (isset($each_sheet_content["contentStyle"][$content_sheet_title][$each_sheet_content['sheet_title'][$content_sheet_title][$col]])) {
-									$rowStart=$row==0?1:$row;
-									//Compare Array headerColumnCssClass and Array sheet_title
-									$tempStyleContent = $each_sheet_content["contentStyle"][$content_sheet_title][$each_sheet_content['sheet_title'][$content_sheet_title][$col]];									
-									$tempColumnContent= self::excelColumnName($col+1) . ($rowStart + $cnt_sheet_title_start); //State range [[0]=>A1,[1]=>B1]									
-									//$tempColumnContent[]= self::excelColumnName($col+1) . ($rowStart + $cnt_sheet_title_start); //State range [[0]=>A1,[1]=>B1]									
-									
-									 //align
-									if (isset($tempStyleContent["align"]) and $tempStyleContent['align']){
-										$getAliginContent=strtoupper($tempStyleContent["align"]);
-										if ($getAliginContent=='LEFT'){
-											$current_sheet->getStyle($tempColumnContent)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-										}elseif($getAliginContent=='CENTER'){
-											$current_sheet->getStyle($tempColumnContent)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-										}elseif($getAliginContent=='RIGHT'){
-											$current_sheet->getStyle($tempColumnContent)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-										}else{
-											$current_sheet->getStyle($tempColumnContent)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+						for ($yAB = 0; $yAB < $content_sheet_title; $yAB++) { //Count sub Array sheet_title by [$y]
+							for ($xAB = 0; $xAB < count($each_sheet_content['sheet_title'][$yAB]); $xAB++) {
+								for ($colAB = 0; $colAB < count($each_sheet_content['sheet_title'][$xAB]); $colAB++) {
+									if (array_key_exists('contentStyle', $each_sheet_content)) {
+										if (isset($each_sheet_content["contentStyle"][$yAB][$each_sheet_content['sheet_title'][$xAB][$colAB]])) {
+											$rowStart=$row==0?1:$row;
+											//Compare Array headerColumnCssClass and Array sheet_title
+											$tempStyleContent = $each_sheet_content["contentStyle"][$yAB][$each_sheet_content['sheet_title'][$xAB][$colAB]];									
+											//$tempStyleContent[] = $each_sheet_content["contentStyle"][$yAB];									
+											//$tempStyleContent[] = [$each_sheet_content['sheet_title'][$xAB][$colAB]];									
+											$tempColumnContent= self::excelColumnName($colAB+1) . ($rowStart + $cnt_sheet_title_start); //State range [[0]=>A1,[1]=>B1]									
+											
+											 //align
+											if (isset($tempStyleContent["align"]) and $tempStyleContent['align']){
+												$getAliginContent=strtoupper($tempStyleContent["align"]);
+												if ($getAliginContent=='LEFT'){
+													$current_sheet->getStyle($tempColumnContent)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+												}elseif($getAliginContent=='CENTER'){
+													$current_sheet->getStyle($tempColumnContent)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+												}elseif($getAliginContent=='RIGHT'){
+													$current_sheet->getStyle($tempColumnContent)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+												}else{
+													$current_sheet->getStyle($tempColumnContent)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+												}
+											} 
+											
+											 //font color
+											if (isset($tempStyleContent["color-font"]) and $tempStyleContent['color-font']){
+												$current_sheet->getStyle($tempColumnContent)->getFont()->getColor()->setARGB($tempStyleContent['color-font']);
+											}
+											
+											//Next Update per cell checking (color-font,color-background)
+											//color background
+											if (isset($tempStyleContent["color-background"]) and $tempStyleContent['color-background']) {
+												$current_sheet->getStyle($tempColumnContent)->getFill()->getStartColor()->setRGB($tempStyle["color-background"]);
+												$current_sheet->getStyle($tempColumnContent)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+											}  
 										}
 									}
-									
-									 //font color
-									if (isset($tempStyleContent["color-font"]) and $tempStyleContent['color-font']){
-										$current_sheet->getStyle($tempColumnContent)->getFont()->getColor()->setARGB($tempStyleContent['color-font']);
-									}
-									
-									//Next Update per cell checking (color-font,color-background)
-									//color background
-									/* if (isset($tempStyleContent["color-background"]) and $tempStyleContent['color-background']) {
-										$current_sheet->getStyle($tempColumnContent)->getFill()->getStartColor()->setRGB($tempStyle["color-background"]);
-										$current_sheet->getStyle($tempColumnContent)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-									}  */
-									
-									
-										
-									 
-									
 								}
-								// print_r($tempColumnContent);
-								// die();	
 							}
-								
+							
 						}	
-					}				
+					//}	
+					// print_r($tempColumnContent);
+					// die();						
 				}
             }
 			
 			//$_columnIndex++;
+			//GRNERAL COLUMN PROPERTY
 			$lastCnt = count($each_sheet_content['sheet_title']);//count($each_sheet_content['sheet_title']);
 			$lastCnt_sheet_title=$lastCn==0?$lastCnt:$lastCnt-1;
 			for ($yA = 0; $yA < $lastCnt_sheet_title ; $yA++){

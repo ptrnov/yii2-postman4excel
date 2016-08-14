@@ -2,7 +2,11 @@
 Change Log: `yii2-postman4excel`
 ===================================
 
-## Version 2.4.0, no release
+## Version 2.4.1, 
+**Date:** 2016-08-14
+1. (bug): containStyle.
+
+## Version 2.4.0, 
 **Date:** 2016-08-14
 1. (bug): headerStyle merge (mergeCells). merge(col,row)
 2. (enh): columnAutoSize
