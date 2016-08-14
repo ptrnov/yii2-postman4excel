@@ -2,17 +2,14 @@
 Change Log: `yii2-postman4excel`
 ===================================
 
-## Version 2.4.2, no release
-**Date:** 2016-08-12
+## Version 2.4.0, no release
+**Date:** 2016-08-14
 1. (bug): headerStyle merge (mergeCells). merge(col,row)
 2. (enh): columnAutoSize
+3. (enh): headerStyle width (columnAutoSize==false)
+4. (enh): containStyle color-font
 
-## Version 2.3.1
-**Date:** 2016-08-12
-1. (enh): headerStyle merge (mergeCells). merge(col,row)
-2. (enh): containStyle color-font
-
-## Version 2.2.1
+## Version 2.2.0
 **Date:** 2016-08-11
 1. (enh): containStyle (customize  contain property column align).. 
 
