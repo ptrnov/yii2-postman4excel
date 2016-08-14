@@ -2,6 +2,11 @@
 Change Log: `yii2-postman4excel`
 ===================================
 
+## Version 2.4.2, no release
+**Date:** 2016-08-12
+1. (bug): headerStyle merge (mergeCells). merge(col,row)
+2. (enh): columnAutoSize
+
 ## Version 2.3.1
 **Date:** 2016-08-12
 1. (enh): headerStyle merge (mergeCells). merge(col,row)

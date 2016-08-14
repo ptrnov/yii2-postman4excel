@@ -50,13 +50,22 @@ class Postman4ExcelBehavior extends Behavior
 	*/
 	public $widgetType = '';	
 		
-		
-	public $startRowsValue='';
+	public $columnAutoSize = '';
 	
 	const TYPE_DEFAULT = 'download';
     const TYPE_CRONJOB = 'cronjob';
     const TYPE_MAIL = 'mail';	
-				
+			
+	/**
+	* @var string
+	* validateAutosize Column Auto Size, default true
+	* @author ptrnov [ptr.nov@gmail.com]
+	* @since 2.2.2
+	*/	
+	private static function validateAutosize($val=''){
+		return ($val)!==false?'true':'false';
+	}
+
 	/**
 	* @var string
 	* Path directory constanta
@@ -160,8 +169,9 @@ class Postman4ExcelBehavior extends Behavior
         , 'subject' => 'WWSP_Tracking EXPORT EXCEL'
         , 'desc' => 'WWSP_Tracking EXPORT EXCEL'
         , 'keywords' => 'WWSP Tool Generated Excel, Author: ptrnov'
-        , 'category' => 'WWSP_Tracking EXPORT EXCEL'))
+        , 'category' => 'WWSP_Tracking EXPORT EXCEL'),$autoSize)
     {
+		
         if (!is_array($excel_content)) {
             return FALSE;
         }
@@ -252,6 +262,12 @@ class Postman4ExcelBehavior extends Behavior
 										$current_sheet->getStyle($lineRange)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
 									}
 								}
+								//Last Header-columnAutoSize
+								//echo $autoSize;
+								$current_sheet->getColumnDimension($_columnIndex)->setAutoSize($autoSize=='true'?true:false);
+								$_columnIndex++;
+							
+								
 							}
 					}
 					
@@ -292,15 +308,21 @@ class Postman4ExcelBehavior extends Behavior
 									$tempStyle = $each_sheet_content["headerStyle"][$y][$each_sheet_content['sheet_title'][$y][$x]];
 									$tempColumn= self::excelColumnName($x+1) . ($y+1); //State range [[0]=>A1,[1]=>B1]									
 									
+									//column width
+									// if (isset($tempStyle["width"]) and $tempStyle['width']) {
+										// $current_sheet->getStyle($tempColumn)->setWidth($tempStyle["width"]);
+									// } 
+									
 									//color Merge
 									////$current_sheet->mergeCells('A1:B1');									
 									if (isset($tempStyle["merge"]) and $tempStyle['merge']) {
 										$mergeVal=explode(",", $tempStyle['merge']);
-										$colMerge=(isset($mergeVal[0]))?($mergeVal[0]=='' || $mergeVal[0]==0?($x+1):$mergeVal[0]):($x+1);									
-										$rowMerge=(isset($mergeVal[1]))?($mergeVal[1]==''?$y+1:$mergeVal[1]+1):($y+1);
+										//$colMerge=(isset($mergeVal[0]))?($mergeVal[0]==''?($x+1):$mergeVal[0]==0?($x+1):$mergeVal[0]):($x+1);									
+										$colMerge=(isset($mergeVal[0]))?($mergeVal[0]==0?($x+1):(($x+1)+ $mergeVal[0])):($x+1);									
+										$rowMerge=(isset($mergeVal[1]))?($mergeVal[1]==''?$y+1:$mergeVal[1]):($y+1);
 										$tempColumnMerge= self::excelColumnName($x+1) . ($y+1).":".self::excelColumnName($colMerge) . ($rowMerge);
 										$current_sheet->mergeCells($tempColumnMerge);										
-									} 
+									} 	
 									
 									 //align
 									if (isset($tempStyle["align"]) and $tempStyle['align']){
@@ -325,16 +347,13 @@ class Postman4ExcelBehavior extends Behavior
 									if (isset($tempStyle["color-background"]) and $tempStyle['color-background']) {
 										$current_sheet->getStyle($tempColumn)->getFill()->getStartColor()->setRGB($tempStyle["color-background"]);
 										$current_sheet->getStyle($tempColumn)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-									} 			
+									} 
+												
 									
 								}
 							}						
 						}							
 					}			
-					
-					
-					$current_sheet->getColumnDimension($_columnIndex)->setAutoSize(true);
-					$_columnIndex++;
 				
 				}else{
 					/*
@@ -379,11 +398,16 @@ class Postman4ExcelBehavior extends Behavior
 									}
 								}
 							}
-							$current_sheet->getColumnDimension($_columnIndex)->setAutoSize(true); //
-							$_columnIndex++;
+							// if (self::setAutoSizeManual($columnAutoSize)==true){
+								// $current_sheet->getColumnDimension($_columnIndex)->setAutoSize(true);
+								// $_columnIndex++;
+							// }
+							
 						}
 					}					
 				}	
+				
+			
 			}else{
 				$startRowContent=1;				
 			}
@@ -426,8 +450,8 @@ class Postman4ExcelBehavior extends Behavior
                     for ($l = 0; $l < count($each_sheet_content['ceils'][$row]); $l++) {
                         $current_sheet->setCellValueByColumnAndRow($l, $row + $startRowContent, $each_sheet_content['ceils'][$row][$l]); //update@ptr.nov - $startRowContent -> mulai rows nilai data 
                     }
-					//AutoSizeColumn
-					$current_sheet->getColumnDimension($_columnIndex)->setAutoSize(true); //
+					//All column AutoSize, Not last Header more the one
+					$current_sheet->getColumnDimension($_columnIndex)->setAutoSize($autoSize=='true'?true:false); //
 					$_columnIndex++;
 					//all border content
 					$current_sheet->getStyle($lineRange)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
@@ -490,7 +514,37 @@ class Postman4ExcelBehavior extends Behavior
 					}				
 				}
             }
-        }
+			
+			//$_columnIndex++;
+			$lastCnt = count($each_sheet_content['sheet_title']);//count($each_sheet_content['sheet_title']);
+			$lastCnt_sheet_title=$lastCn==0?$lastCnt:$lastCnt-1;
+			for ($yA = 0; $yA < $lastCnt_sheet_title ; $yA++){
+				for ($xA = 1; $xA < count($each_sheet_content['sheet_title'][$yA]); $xA++) {
+					for ($colA = 0; $colA < count($each_sheet_content['sheet_title'][$xA]); $colA++) {
+						//start handle hearder column css
+						//if (array_key_exists('sheet_title', $each_sheet_content) && !empty($each_sheet_content['sheet_title'])) {
+						if (array_key_exists('headerStyle', $each_sheet_content)){
+							if (isset($each_sheet_content["headerStyle"][$yA][$each_sheet_content['sheet_title'][$xA][$colA]])) {
+								//Compare Array headerColumnCssClass and Array sheet_title
+								$lastHeaderStyle = $each_sheet_content["headerStyle"][$yA][$each_sheet_content['sheet_title'][$xA][$colA]];
+								//$lastHeaderStyle =$each_sheet_content['sheet_title'][$xA][$colA];
+								//$lastHeaderStyle[] =$each_sheet_content["headerStyle"][$yA];
+								$lastHeaderColumn= self::excelColumnName($colA+1);
+								if($autoSize=='false'){
+									if (isset($lastHeaderStyle["width"]) and $lastHeaderStyle['width']){
+										$current_sheet->getColumnDimension($lastHeaderColumn)->setWidth($lastHeaderStyle['width']);
+										//$current_sheet->getColumnDimension($lastHeaderColumn)->setWidth('20');
+									}
+								}
+							}	
+						}
+					}
+				}
+			}
+			
+	    }
+		 // print_r($lastHeaderStyle);
+		 // die();
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 		
 		//Manipulation Name 
@@ -565,7 +619,8 @@ class Postman4ExcelBehavior extends Behavior
         }
 		
 		/*Save File return path+nameFile.extention*/
-        $excelName = self::save4Excel($excel_content, $excel_file, $excel_props);
+		//get validateAutosize(columnAutoSize)
+        $excelName = self::save4Excel($excel_content, $excel_file, $excel_props,self::validateAutosize($this->columnAutoSize));
 		
 		//open file exciute
 		$widgetTypeAction=strtoupper($this->widgetType);

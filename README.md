@@ -41,6 +41,8 @@ Once the extension is installed, simply use it in your code by  :
 				//'widgetType'=>''	 			//Empty same download, file  stay on folder "tmp_mix"
 				//'prefixStr' => yii::$app->user->identity->username,
 				//'suffixStr' => date('Ymd-His'),
+				columnAutoSize'=>'true', //false/true; default True
+				
 			],
 	}
 	// localhost/yourController/test-export
@@ -120,7 +122,7 @@ Once the extension is installed, simply use it in your code by  :
 				/*
 				'headerStyle' => [
 					[
-						'id' => ['align'=>'CENTER','color-font'=>'0000FF','color-background'=>'FFCCCC'],
+						'id' => ['align'=>'CENTER','color-font'=>'0000FF','color-background'=>'FFCCCC','merge'=>'0,2','width'=>'20'], //columnAutoSize=false, width is Active
 						'username' => ['align'=>'left','color-font'=>'FF0000','color-background'=>'CCFF99','merge'=>'2,1'], //'merge'=>'col,row'
 					],
 					[
