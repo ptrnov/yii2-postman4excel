@@ -5,6 +5,7 @@ Change Log: `yii2-postman4excel`
 ## Version 2.4.2, 
 **Date:** 2016-08-14
 1. (bug): excelDataFormat, validate array
+2. (bug): headerStyle merge
 
 ## Version 2.4.1, 
 **Date:** 2016-08-14

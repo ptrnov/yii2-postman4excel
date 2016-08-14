@@ -325,7 +325,7 @@ class Postman4ExcelBehavior extends Behavior
 										$mergeVal=explode(",", $tempStyle['merge']);
 										//$colMerge=(isset($mergeVal[0]))?($mergeVal[0]==''?($x+1):$mergeVal[0]==0?($x+1):$mergeVal[0]):($x+1);									
 										$colMerge=(isset($mergeVal[0]))?($mergeVal[0]==0?($x+1):(($x+1)+ $mergeVal[0])):($x+1);									
-										$rowMerge=(isset($mergeVal[1]))?($mergeVal[1]==''?$y+1:$mergeVal[1]):($y+1);
+										$rowMerge=(isset($mergeVal[1]))?($mergeVal[1]==0?($y+1):($y)+$mergeVal[1]):($y+1);
 										$tempColumnMerge= self::excelColumnName($x+1) . ($y+1).":".self::excelColumnName($colMerge) . ($rowMerge);
 										$current_sheet->mergeCells($tempColumnMerge);										
 									} 	
@@ -524,7 +524,7 @@ class Postman4ExcelBehavior extends Behavior
 			//$_columnIndex++;
 			//GRNERAL COLUMN PROPERTY
 			$lastCnt = count($each_sheet_content['sheet_title']);//count($each_sheet_content['sheet_title']);
-			$lastCnt_sheet_title=$lastCn==0?$lastCnt:$lastCnt-1;
+			$lastCnt_sheet_title=$lastCnt==0?$lastCnt:($lastCnt-1);
 			for ($yA = 0; $yA < $lastCnt_sheet_title ; $yA++){
 				for ($xA = 1; $xA < count($each_sheet_content['sheet_title'][$yA]); $xA++) {
 					for ($colA = 0; $colA < count($each_sheet_content['sheet_title'][$xA]); $colA++) {
