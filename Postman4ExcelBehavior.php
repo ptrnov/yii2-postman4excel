@@ -131,12 +131,17 @@ class Postman4ExcelBehavior extends Behavior
      */
     public static function excelDataFormat($data)
     {
-        for ($i = 0; $i < count($data); $i++) {
-            $each_arr = $data[$i];
-            $new_arr[] = array_values($each_arr); 
-        }
-        $new_key[] = array_keys($data[0]); 
-        return array('excel_title' => $new_key[0], 'excel_ceils' => $new_arr);
+		if (isset($data[0])){
+			for ($i = 0; $i < count($data); $i++) {
+				$each_arr = $data[$i];
+				$new_arr[] = array_values($each_arr); 
+			}
+			$new_key[] = array_keys($data[0]); 
+			return array('excel_title' => $new_key[0], 'excel_ceils' => $new_arr);
+		}else{
+			return array('excel_title' =>[], 'excel_ceils' =>[]);
+		}
+		
     }
     /**
      * Returns the coresponding excel column.(Abdul Rehman from yii forum)
