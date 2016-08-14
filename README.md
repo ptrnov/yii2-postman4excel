@@ -41,7 +41,7 @@ Once the extension is installed, simply use it in your code by  :
 				//'widgetType'=>''	 			//Empty same download, file  stay on folder "tmp_mix"
 				//'prefixStr' => yii::$app->user->identity->username,
 				//'suffixStr' => date('Ymd-His'),
-				columnAutoSize'=>'true', //false/true; default True
+				'columnAutoSize'=>'true', //false/true; default True
 				
 			],
 	}
