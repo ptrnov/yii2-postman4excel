@@ -1,6 +1,10 @@
 ```php
 Change Log: `yii2-postman4excel`
 ===================================
+## Version 2.4.3, 
+**Date:** 2016-08-18
+1. (bug): containStyle
+
 
 ## Version 2.4.2, 
 **Date:** 2016-08-14

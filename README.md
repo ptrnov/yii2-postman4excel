@@ -76,13 +76,11 @@ Once the extension is installed, simply use it in your code by  :
 		$excel_content = [
 			[
 				'sheet_name' => 'TEST EXPORT 1',
-                //'sheet_title' => $excel_title1, 					//old version
-                //'sheet_title' => [$excel_title1], 				//new version
-                'sheet_title' => [$excel_title1,$excel_title2], 	//new version				
+                'sheet_title' => $excel_title1, 					//old version				
 			    'ceils' => $excel_ceilsAll,
 				//'freezePane' => 'E2',
                 'headerColor' => Postman4ExcelBehavior::getCssClass("header"),	//All Header Color font and Backgroud
-                'headerColumnCssClass' => [
+                'headerColumnCssClass' => [							//old version
 					  [
 						'id' => Postman4ExcelBehavior::getCssClass('yellow'),
 						'username' => Postman4ExcelBehavior::getCssClass('green'),
@@ -98,55 +96,41 @@ Once the extension is installed, simply use it in your code by  :
 			],
 			[
 				'sheet_name' => 'TEST EXPORT 2',
-                //'sheet_title' => $excel_title1, 					//old version
-                //'sheet_title' => [$excel_title1], 				//new version
-                'sheet_title' => [$excel_title1,$excel_title2], 	//new version				
+				//'sheet_title' => [$excel_title1], 				//new version | one Header
+                'sheet_title' => [									//new version | two or more Header
+					$excel_title1,
+					$excel_title2
+				], 	//new version				
 			    'ceils' => $excel_ceilsAll,
 				//'freezePane' => 'E2',
-                'headerColor' => Postman4ExcelBehavior::getCssClass("header"),	//All Header Color font and Backgroud
-               
-			    //Deafault Header properties
-				'headerColumnCssClass' => [
-					  [
-						'id' => Postman4ExcelBehavior::getCssClass('red'),
-						'username' => Postman4ExcelBehavior::getCssClass('green'),
-					 ],
-					 [
-						 'ID' => Postman4ExcelBehavior::getCssClass('red'),  
-						 'USERNAME' => Postman4ExcelBehavior::getCssClass('green'), 						 
-					 ]             
-                             
-                ],
-				//customize Header properties
-				// Color Ref: http://dmcritchie.mvps.org/excel/colors.htm
-				/*
-				'headerStyle' => [
-					[
-						'id' => ['align'=>'CENTER','color-font'=>'0000FF','color-background'=>'FFCCCC','merge'=>'0,2','width'=>'20'], //columnAutoSize=false, width is Active
-						'username' => ['align'=>'left','color-font'=>'FF0000','color-background'=>'CCFF99','merge'=>'2,1'], //'merge'=>'col,row'
+                'headerColor' => Postman4ExcelBehavior::getCssClass("header"),	//old Version | All Header Color font and Backgroud            
+				/* --------------------------------------------------------
+				 * customize Header properties
+				 * Color Ref: http://dmcritchie.mvps.org/excel/colors.htm
+				 * columnAutoSize=false, width is Active
+				 * 'merge'=>'col,row'
+				 * Content properties, validate on use last column title
+				 * --------------------------------------------------------
+				 */
+				'headerStyle' => [									//new version
+					[	//the first Header						
+						'id' => ['align'=>'CENTER','color-font'=>'0000FF','color-background'=>'FFCCCC','merge'=>'0,2','width'=>'2,0'],
+						'username' => ['align'=>'left','color-font'=>'FF0000','color-background'=>'CCFF99','merge'=>'2,1'], 
 					],
-					[
+					[	//The second Header
 						 'ID' =>  ['align'=>'right','color-font'=>'0000FF','color-background'=>'CCFFCC'],
 						 'USERNAME' =>  ['align'=>'right','color-font'=>'000000','color-background'=>'FFFF99'],				 
 					]                              
                 ],  
-				*/
-				//customize Content properties
-				// Content properties, validate on use last column title
-				'contentStyle' => [
-					  [
-						'id' => ['align'=>'left'],
-						'username' => ['align'=>'right'],
-					 ],
-					 [
-						 'ID' =>  ['align'=>'center','color-font'=>'0000FF'],
-						 'USERNAME' =>  ['align'=>'center','color-font'=>'0000FF'],				 
-					 ], 
-					// [
-					//	 'id' =>  ['align'=>'right'],
-					//	 'username' =>  ['align'=>'right'],				 
-					// ] 					 
-                             
+				'contentStyle' => [									//new version
+					[//the first Content
+						//'id' => ['align'=>'left'],
+						//'username' => ['align'=>'right'],
+					],
+					[//The second Content
+						'ID' =>  ['align'=>'center','color-font'=>'0000FF'],
+						'USERNAME' =>  ['align'=>'center','color-font'=>'0000FF'],				 
+					],                              
                 ],  
                'oddCssClass' => Postman4ExcelBehavior::getCssClass("odd"),
                'evenCssClass' => Postman4ExcelBehavior::getCssClass("even"),
