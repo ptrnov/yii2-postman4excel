@@ -1,6 +1,18 @@
 ```php
 Change Log: `yii2-postman4excel`
 ===================================
+
+## Version 2.4.5, 
+**Date:** 2017-02-06
+1. (chg): columnAutoSize
+2. (chg): headerStyle width (columnAutoSize==false)
+3. (enh): valign
+4. (enh): Text Wrap
+
+## Version 2.4.4, 
+**Date:** 2016-10-06
+1. (bug): path custimize
+
 ## Version 2.4.3, 
 **Date:** 2016-08-18
 1. (bug): containStyle

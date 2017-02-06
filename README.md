@@ -75,7 +75,7 @@ Once the extension is installed, simply use it in your code by  :
 		
 		$excel_content = [
 			[
-				'sheet_name' => 'TEST EXPORT 1',
+				'sheet_name' => 'TEST EXPORT 1 old version',
                 'sheet_title' => $excel_title1, 					//old version				
 			    'ceils' => $excel_ceilsAll,
 				//'freezePane' => 'E2',
@@ -95,7 +95,7 @@ Once the extension is installed, simply use it in your code by  :
                'evenCssClass' => Postman4ExcelBehavior::getCssClass("even"),
 			],
 			[
-				'sheet_name' => 'TEST EXPORT 2',
+				'sheet_name' => 'TEST EXPORT 2 new version ',
 				//'sheet_title' => [$excel_title1], 				//new version | one Header
                 'sheet_title' => [									//new version | two or more Header
 					$excel_title1,
@@ -115,7 +115,7 @@ Once the extension is installed, simply use it in your code by  :
 				'headerStyle' => [									//new version
 					[	//the first Header						
 						'id' => ['align'=>'CENTER','color-font'=>'0000FF','color-background'=>'FFCCCC','merge'=>'0,2','width'=>'2,0'],
-						'username' => ['align'=>'left','color-font'=>'FF0000','color-background'=>'CCFF99','merge'=>'2,1'], 
+						'username' => ['align'=>'left','color-font'=>'FF0000','color-background'=>'CCFF99','merge'=>'2,1','width'=>'32.29','valign'=>'center','wrap'=>true], 
 					],
 					[	//The second Header
 						 'ID' =>  ['align'=>'right','color-font'=>'0000FF','color-background'=>'CCFFCC'],

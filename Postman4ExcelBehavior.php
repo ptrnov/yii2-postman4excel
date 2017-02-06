@@ -91,6 +91,8 @@ class Postman4ExcelBehavior extends Behavior
 			$folder_='tmp_download';
 		}elseif($folder=='CRONJOB'){
 			$folder_='tmp_cronjob';
+		}elseif($folder=='CUSTOMPATH'){
+			$folder_='';
 		}elseif($folder=='MAIL'){
 			$folder_='tmp_mail';
 		}else{
@@ -226,7 +228,7 @@ class Postman4ExcelBehavior extends Behavior
 			* --HEADER set sheet
 			*/
             $current_sheet->setTitle(str_replace(array('/', '*', '?', '\\', ':', '[', ']'), array('_', '_', '_', '_', '_', '_', '_'), substr($each_sheet_content['sheet_name'], 0, 30))); //add by Scott
-            $current_sheet->getColumnDimension()->setAutoSize(true); //Scott, set column autosize
+           // $current_sheet->getColumnDimension()->setAutoSize(true); //Scott, set column autosize
             //set sheet's current title
             $_columnIndex = 'A';
 			
@@ -270,7 +272,9 @@ class Postman4ExcelBehavior extends Behavior
 								}
 								//Last Header-columnAutoSize
 								//echo $autoSize;
-								$current_sheet->getColumnDimension($_columnIndex)->setAutoSize($autoSize=='true'?true:false);
+								// $current_sheet->getColumnDimension($_columnIndex)->setAutoSize($autoSize=='true'?true:false);
+								// $coltest=self::excelColumnName(count($each_sheet_content['sheet_title'][$y]));
+								// $current_sheet->getColumnDimension('F')->setWidth('120');
 								$_columnIndex++;
 							
 								
@@ -313,11 +317,23 @@ class Postman4ExcelBehavior extends Behavior
 									//Compare Array headerColumnCssClass and Array sheet_title
 									$tempStyle = $each_sheet_content["headerStyle"][$y][$each_sheet_content['sheet_title'][$y][$x]];
 									$tempColumn= self::excelColumnName($x+1) . ($y+1); //State range [[0]=>A1,[1]=>B1]									
+									$tempColumnPosition= self::excelColumnName($x+1);							
 									
-									//column width
-									// if (isset($tempStyle["width"]) and $tempStyle['width']) {
-										// $current_sheet->getStyle($tempColumn)->setWidth($tempStyle["width"]);
-									// } 
+									//col width
+									//update by	: ptr.nov@gmail.com
+									//update at	: 06/02/2017
+									$current_sheet->getColumnDimension($_columnIndex)->setAutoSize($autoSize=='true'?true:false);
+									if (isset($tempStyle["width"]) and $tempStyle['width']) {
+										$current_sheet->getColumnDimension($tempColumnPosition)->setWidth($tempStyle['width']);
+									}
+									
+									//col Wrap text.
+									//update by	: ptr.nov@gmail.com
+									//update at	: 06/02/2017
+									if (isset($tempStyle["wrap"]) and $tempStyle['wrap']) {
+										//$current_sheet->getColumnDimension($tempColumnPosition)->setTextWrap(true);
+										$current_sheet->getStyle($tempColumnPosition)->getAlignment()->setWrapText('true');
+									}
 									
 									//color Merge
 									////$current_sheet->mergeCells('A1:B1');									
@@ -329,6 +345,18 @@ class Postman4ExcelBehavior extends Behavior
 										$tempColumnMerge= self::excelColumnName($x+1) . ($y+1).":".self::excelColumnName($colMerge) . ($rowMerge);
 										$current_sheet->mergeCells($tempColumnMerge);										
 									} 	
+									
+									//valign
+									if (isset($tempStyle["valign"]) and $tempStyle['valign']){
+										$getvAligin=strtoupper($tempStyle["valign"]);
+										if ($getvAligin=='TOP'){
+											$current_sheet->getStyle($tempColumnPosition)->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
+										}elseif($getvAligin=='CENTER'){
+											$current_sheet->getStyle($tempColumnPosition)->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
+										}elseif($getvAligin=='BOTTEM'){
+											$current_sheet->getStyle($tempColumnPosition)->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_BOTTOM);
+										}
+									}
 									
 									 //align
 									if (isset($tempStyle["align"]) and $tempStyle['align']){
@@ -342,7 +370,9 @@ class Postman4ExcelBehavior extends Behavior
 										}else{
 											$current_sheet->getStyle($tempColumn)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 										}
-									}
+									} 									
+									
+									
 									
 									 //font color
 									if (isset($tempStyle["color-font"]) and $tempStyle['color-font']){
@@ -354,7 +384,8 @@ class Postman4ExcelBehavior extends Behavior
 										$current_sheet->getStyle($tempColumn)->getFill()->getStartColor()->setRGB($tempStyle["color-background"]);
 										$current_sheet->getStyle($tempColumn)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
 									} 
-												
+									
+									
 									
 								}
 							}						
@@ -457,7 +488,7 @@ class Postman4ExcelBehavior extends Behavior
                         $current_sheet->setCellValueByColumnAndRow($l, $row + $startRowContent, $each_sheet_content['ceils'][$row][$l]); //update@ptr.nov - $startRowContent -> mulai rows nilai data 
                     }
 					//All column AutoSize, Not last Header more the one
-					$current_sheet->getColumnDimension($_columnIndex)->setAutoSize($autoSize=='true'?true:false); //
+					//$current_sheet->getColumnDimension($_columnIndex)->setAutoSize($autoSize=='true'?true:false); //
 					$_columnIndex++;
 					//all border content
 					$current_sheet->getStyle($lineRange)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
@@ -498,6 +529,14 @@ class Postman4ExcelBehavior extends Behavior
 												}
 											} 
 											
+											//WrapText.
+											if (isset($tempStyleContent["wrap"]) and $tempStyleContent['wrap']){
+												$getWrapContent=strtoupper($tempStyleContent["wrap"]);
+												if ($getAliginContent=='WRAP'){
+													$current_sheet->getStyle($tempColumnContent)->getAlignment()->setWrapText(true);
+												}
+											}
+											
 											 //font color
 											if (isset($tempStyleContent["color-font"]) and $tempStyleContent['color-font']){
 												$current_sheet->getStyle($tempColumnContent)->getFont()->getColor()->setARGB($tempStyleContent['color-font']);
@@ -537,12 +576,12 @@ class Postman4ExcelBehavior extends Behavior
 								//$lastHeaderStyle =$each_sheet_content['sheet_title'][$xA][$colA];
 								//$lastHeaderStyle[] =$each_sheet_content["headerStyle"][$yA];
 								$lastHeaderColumn= self::excelColumnName($colA+1);
-								if($autoSize=='false'){
+								/* if($autoSize=='false'){
 									if (isset($lastHeaderStyle["width"]) and $lastHeaderStyle['width']){
 										$current_sheet->getColumnDimension($lastHeaderColumn)->setWidth($lastHeaderStyle['width']);
 										//$current_sheet->getColumnDimension($lastHeaderColumn)->setWidth('20');
 									}
-								}
+								} */
 							}	
 						}
 					}
