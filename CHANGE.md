@@ -2,9 +2,17 @@
 Change Log: `yii2-postman4excel`
 ===================================
 
+## Version 2.4.6, 
+**Date:** 2017-02-08
+1. (chg): font-size.
+2. (enh): ColumnGrouping (Grouping Rows).
+3. (enh): Active Column.
+4. (chg): Postman4ExcelBehavior::excelDataFormat. (can used/not).
+5. (chg): autoSize. (Autosize per-sheet content),
+
 ## Version 2.4.5, 
 **Date:** 2017-02-06
-1. (chg): columnAutoSize
+1. (chg): columnAutoSize.
 2. (chg): headerStyle width (columnAutoSize==false)
 3. (enh): valign
 4. (enh): Text Wrap

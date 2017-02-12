@@ -186,6 +186,7 @@ class Postman4ExcelBehavior extends Behavior
         if (empty($excel_file)) {
             return FALSE;
         }
+		
         $objPHPExcel = new PHPExcel();
         $objProps = $objPHPExcel->getProperties();
         $objProps->setCreator($excel_props['creator']);
@@ -212,7 +213,7 @@ class Postman4ExcelBehavior extends Behavior
         $style_obj->applyFromArray($style_array);
         //start export excel
         for ($i = 0; $i < count($excel_content); $i++) {
-            $each_sheet_content = $excel_content[$i];
+            $each_sheet_content = $excel_content[$i]; 																					//looping sheet for Array Data Content. -ptr.nov- 		
             if ($i == 0) {
                 //There will be a default sheet, so no need create
                 $objPHPExcel->setActiveSheetIndex(intval(0));
@@ -220,15 +221,79 @@ class Postman4ExcelBehavior extends Behavior
             } else {
                 //create sheet
                 $objPHPExcel->createSheet();
-                $current_sheet = $objPHPExcel->getSheet($i);
+                $current_sheet = $objPHPExcel->getSheet($i);																			//Set Active sheet & proprties  -ptr.nov- 
             }
 			
+			/**
+			 * GROUPING CEIL DATA.
+			 * Group rows from Column Set.
+			 * Author 	: ptr,nov@gmail.com.
+			 * Update	: 11/02/2017
+			*/
+			$ceilsDataContent=$each_sheet_content['ceils'];																					//Ceils Data Definition.  -ptr.nov- 
+			$validateDataInput=ArrayHelper::getColumn($ceilsDataContent,$each_sheet_content["columnGroup"]);
+			if(self::checkErrorArray($validateDataInput)){																						// Jika Input data bukan self::excelDataFormat. -ptr.nov- 							
+				if($each_sheet_content["columnGroup"]){																						// Jika ColumGroup di set. -ptr.nov- 							
+					//$ceilsDataContentSort=self::array_sorting($ceilsDataContent, 'CUST_NM', SORT_ASC);
+					$columnGroup=$each_sheet_content["columnGroup"];				
+					$ceilsDataContentSortFirst=self::array_sorting($ceilsDataContent, $columnGroup, SORT_ASC);									//Grouping Array Column Selected.  -ptr.nov- 
+					$ttlColumns=count($ceilsDataContentSortFirst[0]);																			//Total columns.	-ptr.nov-
+					$ttlRows=count($ceilsDataContentSortFirst);																					//Total rows.	-ptr.nov-
+					$selectColum = ArrayHelper::getColumn($ceilsDataContentSortFirst,$columnGroup);
+					$ttlRowsGroupCount=array_count_values($selectColum);																		//Grouping count of colomn select.				
+					$cnt_sheet_title = count($each_sheet_content['sheet_title']); 																// count rows of header title 
+					$startRowContent=$cnt_sheet_title+1;																						// Start Content Ceil = header +1
+					$jarak=$startRowContent;
+					foreach($ttlRowsGroupCount as $value){					
+						/**
+						 * Rumus: 
+						 * Valus=Count per-item group data.
+						 * jarak=looping jarak + Value, pertama hanya Jarak.
+						 * jika row=2 dan count-grp=3 hitung di mulai "2=1,3=2,4=3.
+						 * (dikurang 2) jika jarak awal=2 maka (2+3)=5, kemudian 5-2 = 3.  
+						*/ 
+						$rumusGrp[]=['row'=>$jarak,'jarak'=>($jarak+$value-2)];																// Testing
+						if($value>1){//jika group lebih besar dari 1,lebih kecil no.group
+							for($a=$jarak;$a <=($jarak+$value-2); $a++){
+								$current_sheet->getRowDimension($a)->setOutlineLevel(1);
+								$current_sheet->getRowDimension($a)->setVisible(false);
+								$current_sheet->getRowDimension($a)->setCollapsed(true);
+							}
+						}						
+						$jarak=$jarak+$value;
+					}
+					// print_r($rumusGrp);																			//validasi input data.
+					// die();
+					//Set Data Format Excel.
+					$rsltData1=self::excelDataFormat($ceilsDataContentSortFirst);
+					$ceilsDataContentSort=$rsltData1['excel_ceils'];	
+					// print_r($ceilsDataContentSort);			
+					// die();					
+					$current_sheet->getColumnDimension()->setAutoSize($each_sheet_content["autoSize"]);
+				}else{
+					$rsltData2=self::excelDataFormat($ceilsDataContent);
+					$ceilsDataContentSort=$rsltData2['excel_ceils'];
+					// print_r($ceilsDataContentSort);			
+					// die();
+					$current_sheet->getColumnDimension()->setAutoSize($each_sheet_content["autoSize"]);
+				};
+			}else{
+				//Old version
+				$rsltData3=self::excelDataFormat($each_sheet_content['ceils']);
+				$ceilsDataContentSort=$rsltData3['excel_ceils'];
+				$current_sheet->getColumnDimension()->setAutoSize($each_sheet_content["autoSize"]);
+				// print_r($ceilsDataContentSort);			
+				// die();
+			}
+			// print_r(self::checkErrorArray($validateDataInput));			
+			 // die();
 			
 			/*
 			* --HEADER set sheet
 			*/
             $current_sheet->setTitle(str_replace(array('/', '*', '?', '\\', ':', '[', ']'), array('_', '_', '_', '_', '_', '_', '_'), substr($each_sheet_content['sheet_name'], 0, 30))); //add by Scott
-           // $current_sheet->getColumnDimension()->setAutoSize(true); //Scott, set column autosize
+            //$current_sheet->getColumnDimension()->setAutoSize(true); //Scott, set column autosize
+			//$current_sheet->getColumnDimension()->setAutoSize($each_sheet_content["autoSize"]);
             //set sheet's current title
             $_columnIndex = 'A';
 			
@@ -307,7 +372,7 @@ class Postman4ExcelBehavior extends Behavior
 					
 					
 					
-					//header Colomn Aligin
+					//header Colomn And Rows Maintain
 					for ($y = 0; $y < $cnt_sheet_title; $y++) { //Count Array sheet_title
 						for ($x = 0; $x < count($each_sheet_content['sheet_title'][$y]); $x++) { //Count sub Array sheet_title by [$y]
 							//start handle hearder column css
@@ -322,7 +387,10 @@ class Postman4ExcelBehavior extends Behavior
 									//col width
 									//update by	: ptr.nov@gmail.com
 									//update at	: 06/02/2017
-									$current_sheet->getColumnDimension($_columnIndex)->setAutoSize($autoSize=='true'?true:false);
+									//$current_sheet->getColumnDimension($_columnIndex)->setAutoSize($autoSize=='true'?true:false);
+									//$current_sheet->getColumnDimension($_columnIndex)->setAutoSize($each_sheet_content["autoSize"]);
+									// print_r($each_sheet_content["autoSize"]);
+									// die();
 									if (isset($tempStyle["width"]) and $tempStyle['width']) {
 										$current_sheet->getColumnDimension($tempColumnPosition)->setWidth($tempStyle['width']);
 									}
@@ -370,10 +438,7 @@ class Postman4ExcelBehavior extends Behavior
 										}else{
 											$current_sheet->getStyle($tempColumn)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 										}
-									} 									
-									
-									
-									
+									} 	
 									 //font color
 									if (isset($tempStyle["color-font"]) and $tempStyle['color-font']){
 										$current_sheet->getStyle($tempColumn)->getFont()->getColor()->setARGB($tempStyle['color-font']);
@@ -385,8 +450,18 @@ class Postman4ExcelBehavior extends Behavior
 										$current_sheet->getStyle($tempColumn)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
 									} 
 									
+									//Font-Size
+									if (isset($tempStyle["font-size"]) and $tempStyle['font-size']) {
+										$current_sheet->getStyle($tempColumn)->getFont()->setSize($tempStyle["font-size"]);
+									}
 									
-									
+									/* //$current_sheet->getStyle($tempColumn)->setOutlineLevel(1);
+									$current_sheet->getRowDimension(2+1,1)->setOutlineLevel(1);
+									//$current_sheet->getRowDimension($x,3)->setVisible(false);
+									$current_sheet->getRowDimension(2+1,1)->setCollapsed(true);
+									$current_sheet->getRowDimension(4+1,1)->setOutlineLevel(1);
+									//$current_sheet->getRowDimension($x,3)->setVisible(false);
+									$current_sheet->getRowDimension(4+1,1)->setCollapsed(true); */
 								}
 							}						
 						}							
@@ -454,6 +529,8 @@ class Postman4ExcelBehavior extends Behavior
 			*/			
 			if (array_key_exists('freezePane', $each_sheet_content) && !empty($each_sheet_content['freezePane'])) {
                 $current_sheet->freezePane($each_sheet_content['freezePane']);
+               // $current_sheet->setSelectedCell('A2');
+			  // $current_sheet->getColumnDimension()->setAutoSize($each_sheet_content["autoSize"]);
             }
 			
 			/*
@@ -461,10 +538,11 @@ class Postman4ExcelBehavior extends Behavior
 			* check State, $startRowContent
 			* write sheet content
 			*/
-		    if (array_key_exists('ceils', $each_sheet_content) && !empty($each_sheet_content['ceils'])) {
-                for ($row = 0; $row < count($each_sheet_content['ceils']); $row++) {
+		    if (array_key_exists('ceils', $each_sheet_content) && !empty($ceilsDataContentSort)) {
+				
+                for ($row = 0; $row < count($ceilsDataContentSort); $row++) {
                     //setting row css
-                    $lineRange = "A" . ($row + $startRowContent) . ":" . self::excelColumnName(count($each_sheet_content['ceils'][$row])) . ($row + $startRowContent); //update@ptr.nov - $startRowContent -> mulai rows nilai data warna
+                    $lineRange = "A" . ($row + $startRowContent) . ":" . self::excelColumnName(count($ceilsDataContentSort[$row])) . ($row + $startRowContent); //update@ptr.nov - $startRowContent -> mulai rows nilai data warna
                     if (($row + 1) % 2 == 1 and isset($each_sheet_content["oddCssClass"])) {
                         if ($each_sheet_content["oddCssClass"]["color"])
                             $current_sheet->getStyle($lineRange)->getFont()->getColor()->setARGB($each_sheet_content["oddCssClass"]["color"]);
@@ -484,8 +562,8 @@ class Postman4ExcelBehavior extends Behavior
                         }
                     }
                     //write content
-                    for ($l = 0; $l < count($each_sheet_content['ceils'][$row]); $l++) {
-                        $current_sheet->setCellValueByColumnAndRow($l, $row + $startRowContent, $each_sheet_content['ceils'][$row][$l]); //update@ptr.nov - $startRowContent -> mulai rows nilai data 
+                    for ($l = 0; $l < count($ceilsDataContentSort[$row]); $l++) {
+                        $current_sheet->setCellValueByColumnAndRow($l, $row + $startRowContent, $ceilsDataContentSort[$row][$l]); //update@ptr.nov - $startRowContent -> mulai rows nilai data 
                     }
 					//All column AutoSize, Not last Header more the one
 					//$current_sheet->getColumnDimension($_columnIndex)->setAutoSize($autoSize=='true'?true:false); //
@@ -498,7 +576,7 @@ class Postman4ExcelBehavior extends Behavior
 					//print_r($lineRange);
 					//die();					
                 }
-				for ($row = 0; $row < (count($each_sheet_content['ceils'])+1); $row++) {
+				for ($row = 0; $row < (count($ceilsDataContentSort)+1); $row++) {
 					//if(isset($each_sheet_content['sheet_title'][0])){ // if not have sheet_title -- next PR ptr.nov
 						$content_sheet_titleFirst = count($each_sheet_content['sheet_title']);
 						$content_sheet_title=$content_sheet_titleFirst==0?$content_sheet_titleFirst:$content_sheet_titleFirst-1;
@@ -548,6 +626,11 @@ class Postman4ExcelBehavior extends Behavior
 												$current_sheet->getStyle($tempColumnContent)->getFill()->getStartColor()->setRGB($tempStyle["color-background"]);
 												$current_sheet->getStyle($tempColumnContent)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
 											}  
+											
+											//Font-Size
+											if (isset($tempStyleContent["font-size"]) and $tempStyleContent['font-size']) {
+												$current_sheet->getStyle($tempColumnContent)->getFont()->setSize($tempStyleContent["font-size"]);
+											} 
 										}
 									}
 								}
@@ -556,7 +639,9 @@ class Postman4ExcelBehavior extends Behavior
 						}	
 					//}	
 					// print_r($tempColumnContent);
-					// die();						
+					// die();
+					//Active cursor. -ptr.nov-
+					$current_sheet->setSelectedCell('A2');
 				}
             }
 			
@@ -753,5 +838,63 @@ class Postman4ExcelBehavior extends Behavior
 		  return false;
 	  }
 	  return true;
+	}
+	
+	/**
+	* @var array
+	* PHP ARRAY - array_sort and revers increment.
+	* @author ptrnov [ptr.nov@gmail.com]
+	* @since 1.4.5
+	* Update : 10/02/2017
+	*/	
+	private function array_sorting($array, $on, $order=SORT_ASC)
+	{
+		$new_array = array();
+		$sortable_array = array();
+
+		if (count($array) > 0) {
+			foreach ($array as $k => $v) {
+				if (is_array($v)) {
+					foreach ($v as $k2 => $v2) {
+						if ($k2 == $on) {
+							$sortable_array[$k] = $v2;
+						}
+					}
+				} else {
+					$sortable_array[$k] = $v;
+				}
+			}
+
+			switch ($order) {
+				case SORT_ASC:
+					asort($sortable_array);
+				break;
+				case SORT_DESC:
+					arsort($sortable_array);
+				break;
+			}
+
+			foreach ($sortable_array as $k => $v) {
+				$new_array[$k] = $array[$k];
+			}
+		}
+	
+		//refresh row increment.
+		foreach ($new_array as $row =>$value){
+			$reversIncrement[]=$value;			
+		}
+		return $reversIncrement;
+	}
+	
+	/**
+	 * Validasi Input data array :Postman4ExcelBehavior::excelDataFormat Atau Direct Langsung.
+	 * 0 = Postman4ExcelBehavior::excelDataFormat.
+	 * 1 = Input data Direct Array langsung Tanpa mengunakan Postman4ExcelBehavior::excelDataFormat.
+	*/
+	private function checkErrorArray($data){
+		foreach($data as $rows){
+			$rslt=$rows;
+		}
+		return $rslt==''?false:true;
 	}
 }

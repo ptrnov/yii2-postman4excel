@@ -41,7 +41,7 @@ Once the extension is installed, simply use it in your code by  :
 				//'widgetType'=>''	 			//Empty same download, file  stay on folder "tmp_mix"
 				//'prefixStr' => yii::$app->user->identity->username,
 				//'suffixStr' => date('Ymd-His'),
-				'columnAutoSize'=>'true', //false/true; default True
+			
 				
 			],
 	}
@@ -57,7 +57,7 @@ Once the extension is installed, simply use it in your code by  :
 		$arySqlDataProvider=$sqlDataProvider->allModels;	
 		
 		/*Array Model Data*/
-		$excel_dataAll = Postman4ExcelBehavior::excelDataFormat($arySqlDataProvider);
+		$excel_dataAll = Postman4ExcelBehavior::excelDataFormat($arySqlDataProvider);	(not used for columnGroup just put 'ceils' => $arySqlDataProvider)
 		$excel_ceilsAll = $excel_dataAll['excel_ceils'];
 		$excel_title1 = $excel_dataAll['excel_title'];
 		$excel_title2 = ['ID','USERNAME'];
@@ -77,8 +77,13 @@ Once the extension is installed, simply use it in your code by  :
 			[
 				'sheet_name' => 'TEST EXPORT 1 old version',
                 'sheet_title' => $excel_title1, 					//old version				
-			    'ceils' => $excel_ceilsAll,
-				//'freezePane' => 'E2',
+			    'ceils' => $excel_ceilsAll,// atau langsung $arySqlDataProvider;
+					//for use column Group.
+					//noted: 'ceils' => "Array Source", not need difinition "Postman4ExcelBehavior::excelDataFormat($array source);"
+					//'columnGroup'=>Name of Field//column group difinition.
+				'columnGroup'=>'CUST_NM',//column for grouping.
+				'autoSize'=>true,	//true/false.
+				//'freezePane' => 'A2',
                 'headerColor' => Postman4ExcelBehavior::getCssClass("header"),	//All Header Color font and Backgroud
                 'headerColumnCssClass' => [							//old version
 					  [
