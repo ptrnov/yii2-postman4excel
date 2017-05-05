@@ -644,9 +644,9 @@ class Postman4ExcelBehavior extends Behavior
 						$content_sheet_titleFirst = count($each_sheet_content['sheet_title']);
 						$content_sheet_title=$content_sheet_titleFirst==0?$content_sheet_titleFirst:$content_sheet_titleFirst-1;
 						$cnt_sheet_title_start = count($each_sheet_content['sheet_title']); // count rows of header title 
-						for ($yAB = 0; $yAB < $content_sheet_titleFirst; $yAB++) { //Count sub Array sheet_title by [$y]
+						for ($yAB = 0; $yAB < $content_sheet_title; $yAB++) { //Count sub Array sheet_title by [$y]
 							for ($xAB = 0; $xAB < count($each_sheet_content['sheet_title'][$yAB]); $xAB++) {
-								for ($colAB = 0; $colAB < count($each_sheet_content['sheet_title'][$xAB]); $colAB++) {
+								for ($colAB = 0; $colAB < $content_sheet_title; $colAB++) {
 									if (array_key_exists('contentStyle', $each_sheet_content)) {
 										if (isset($each_sheet_content["contentStyle"][$yAB][$each_sheet_content['sheet_title'][$xAB][$colAB]])) {
 											$rowStart=$row==0?1:$row;
@@ -714,7 +714,7 @@ class Postman4ExcelBehavior extends Behavior
 			$lastCnt_sheet_title=$lastCnt==0?$lastCnt:($lastCnt-1);
 			for ($yA = 0; $yA < $lastCnt ; $yA++){
 				for ($xA = 1; $xA < count($each_sheet_content['sheet_title'][$yA]); $xA++) {
-					for ($colA = 0; $colA < count($each_sheet_content['sheet_title'][$xA]); $colA++) {
+					for ($colA = 0; $colA < $lastCnt_sheet_title; $colA++) {
 						//start handle hearder column css
 						//if (array_key_exists('sheet_title', $each_sheet_content) && !empty($each_sheet_content['sheet_title'])) {
 						if (array_key_exists('headerStyle', $each_sheet_content)){
