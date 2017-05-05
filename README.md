@@ -81,7 +81,7 @@ Once the extension is installed, simply use it in your code by  :
 					//for use column Group.
 					//noted: 'ceils' => "Array Source", not need difinition "Postman4ExcelBehavior::excelDataFormat($array source);"
 					//'columnGroup'=>Name of Field//column group difinition.
-				'columnGroup'=>'CUST_NM',//column for grouping.
+				'columnGroup'=>['ID'],//column for grouping.
 				'autoSize'=>true,	//true/false.
 				//'freezePane' => 'A2',
                 'headerColor' => Postman4ExcelBehavior::getCssClass("header"),	//All Header Color font and Backgroud

@@ -7,6 +7,7 @@
 namespace  ptrnov\postman4excel;
 use yii\base\Behavior;
 use yii\helpers\Url;
+use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
 use Yii;
 use \PHPExcel;
@@ -230,21 +231,26 @@ class Postman4ExcelBehavior extends Behavior
 			 * Author 	: ptr,nov@gmail.com.
 			 * Update	: 11/02/2017
 			*/
-			$ceilsDataContent=$each_sheet_content['ceils'];																					//Ceils Data Definition.  -ptr.nov- 
-			$validateDataInput=ArrayHelper::getColumn($ceilsDataContent,$each_sheet_content["columnGroup"]);
+			$ceilsDataContent=$each_sheet_content['ceils'];																						//Ceils Data Definition.  -ptr.nov- 
+			$validateDataInput=ArrayHelper::getColumn($ceilsDataContent,$each_sheet_content["columnGroup"][0]);
 			if(self::checkErrorArray($validateDataInput)){																						// Jika Input data bukan self::excelDataFormat. -ptr.nov- 							
-				if($each_sheet_content["columnGroup"]){																						// Jika ColumGroup di set. -ptr.nov- 							
+				if($each_sheet_content["columnGroup"]){																							// Jika ColumGroup di set. -ptr.nov- 							
 					//$ceilsDataContentSort=self::array_sorting($ceilsDataContent, 'CUST_NM', SORT_ASC);
-					$columnGroup=$each_sheet_content["columnGroup"];				
-					$ceilsDataContentSortFirst=self::array_sorting($ceilsDataContent, $columnGroup, SORT_ASC);									//Grouping Array Column Selected.  -ptr.nov- 
-					$ttlColumns=count($ceilsDataContentSortFirst[0]);																			//Total columns.	-ptr.nov-
-					$ttlRows=count($ceilsDataContentSortFirst);																					//Total rows.	-ptr.nov-
-					$selectColum = ArrayHelper::getColumn($ceilsDataContentSortFirst,$columnGroup);
-					$ttlRowsGroupCount=array_count_values($selectColum);																		//Grouping count of colomn select.				
+					$columnGroup=$each_sheet_content["columnGroup"];
+					$arySorting=self::full2sorting($ceilsDataContent,$columnGroup);
+					// $ceilsDataContentSortFirst=self::array_sorting($ceilsDataContent, $columnGroup, SORT_ASC);								//Grouping Array Column Selected.  -ptr.nov- 
+					// $ttlColumns=count($ceilsDataContentSortFirst[0]);																		//Total columns.	-ptr.nov-
+					// $ttlRows=count($ceilsDataContentSortFirst);																				//Total rows.	-ptr.nov-
+					//$selectColum = ArrayHelper::getColumn($ceilsDataContentSortFirst,$columnGroup);
+					$selectColum0 = ArrayHelper::getColumn($arySorting,$columnGroup[0]);
+					
+					$ttlRowsGroupCount0=array_count_values($selectColum0);																		//Grouping count of colomn select.				
+																																				//Grouping count of colomn select.				
 					$cnt_sheet_title = count($each_sheet_content['sheet_title']); 																// count rows of header title 
 					$startRowContent=$cnt_sheet_title+1;																						// Start Content Ceil = header +1
 					$jarak=$startRowContent;
-					foreach($ttlRowsGroupCount as $value){					
+					
+					foreach($ttlRowsGroupCount0 as $rows => $value0){					
 						/**
 						 * Rumus: 
 						 * Valus=Count per-item group data.
@@ -252,20 +258,77 @@ class Postman4ExcelBehavior extends Behavior
 						 * jika row=2 dan count-grp=3 hitung di mulai "2=1,3=2,4=3.
 						 * (dikurang 2) jika jarak awal=2 maka (2+3)=5, kemudian 5-2 = 3.  
 						*/ 
-						$rumusGrp[]=['row'=>$jarak,'jarak'=>($jarak+$value-2)];																// Testing
-						if($value>1){//jika group lebih besar dari 1,lebih kecil no.group
-							for($a=$jarak;$a <=($jarak+$value-2); $a++){
+						//$rumusGrp0[]=['row'=>$jarak,'jarak'=>($jarak+$value0-2)];																// Testing
+						if($value0>1){//jika group lebih besar dari 1,lebih kecil no.group
+							for($a=$jarak;$a <=($jarak+$value0-2); $a++){
 								$current_sheet->getRowDimension($a)->setOutlineLevel(1);
 								$current_sheet->getRowDimension($a)->setVisible(false);
 								$current_sheet->getRowDimension($a)->setCollapsed(true);
 							}
+							//Jika OutlineLevel ada dua.
+							if(count($each_sheet_content["columnGroup"])>1){
+								//Sub Array Split.
+								//$cariHeader=self::array_find($arySorting,$columnGroup[0],'Aeon Mall BSD');					
+								$cariHeader=self::array_find($arySorting,$columnGroup[0],$rows);					
+								$selectColum1 = ArrayHelper::getColumn($cariHeader,$columnGroup[1]);
+								$ttlRowsGroupCount1=array_count_values($selectColum1);																		//Grouping count of colomn select.				
+								$jarak1=$jarak;
+								foreach($ttlRowsGroupCount1 as $rows1 => $value1){
+									if($value1>1){//jika group lebih besar dari 1,lebih kecil no.group
+										for($b=$jarak1;$b <=($jarak1+$value1-2); $b++){
+											$current_sheet->getRowDimension($b)->setOutlineLevel(2);
+											$current_sheet->getRowDimension($b)->setVisible(false);
+											$current_sheet->getRowDimension($b)->setCollapsed(true);
+										}
+									}
+									$jarak1=$jarak1+$value1;
+								}
+							}														
 						}						
-						$jarak=$jarak+$value;
-					}
+						$jarak=$jarak+$value0;						
+						//$selectColum1 = ArrayHelper::getColumn($cariArray,['CUST_NM']);	
+						//$ttlRowsGroupCount1=array_count_values($selectColum1);							
+					};
+					// print_r($ttlRowsGroupCount1);
+					// die();
+					/* function filter($item) {
+						//return 'Aeon Mall BSD';
+						return $item['CUST_NM']=='Aeon Mall BSD';
+					}; */
+
+					//array_filter($arySorting,'Aeon Mall BSD');
+					//$cariArray[]=\yii\helpers\ArrayHelper::filter($arySorting, ['CUST_NM'=>'Aeon Mall BSD']);
+					// $cariHeader=self::array_find($arySorting,'CUST_NM','Aeon Mall BSD');					
+					// $selectColum1 = ArrayHelper::getColumn($cariHeader,$columnGroup[1]);
+					// $ttlRowsGroupCount1=array_count_values($selectColum1);																		//Grouping count of colomn select.				
+					
+					//$dataGroup=self::array_group_by($arySorting,['CUST_NM']);
+					//print_r($cariHeader);
+					//die();
+					//$jarak1=$startRowContent;
+					//foreach($ttlRowsGroupCount1 as $value1){					
+						/**
+						 * Rumus: 
+						 * Valus=Count per-item group data.
+						 * jarak=looping jarak + Value, pertama hanya Jarak.
+						 * jika row=2 dan count-grp=3 hitung di mulai "2=1,3=2,4=3.
+						 * (dikurang 2) jika jarak awal=2 maka (2+3)=5, kemudian 5-2 = 3.  
+						*/ 
+						//$rumusGrp1[]=['row'=>$jarak1,'jarak'=>($jarak1+$value1-2)];																// Testing
+						//if($value1>1){//jika group lebih besar dari 1,lebih kecil no.group
+							//for($b=$jarak1;$ab<=($jarak1+$value1-2); $b++){
+								// $current_sheet->getRowDimension(2,4)->setOutlineLevel(2);
+								// $current_sheet->getRowDimension(2,4)->setVisible(false);
+								// $current_sheet->getRowDimension(2,4)->setCollapsed(true);
+							//}
+						//}						
+						//$jarak1=$jarak1+$value1;
+					//}
+					
 					// print_r($rumusGrp);																			//validasi input data.
 					// die();
 					//Set Data Format Excel.
-					$rsltData1=self::excelDataFormat($ceilsDataContentSortFirst);
+					$rsltData1=self::excelDataFormat($arySorting);
 					$ceilsDataContentSort=$rsltData1['excel_ceils'];	
 					// print_r($ceilsDataContentSort);			
 					// die();					
@@ -805,6 +868,7 @@ class Postman4ExcelBehavior extends Behavior
 			}
 			$buffer = 1024;
 			$file_count = 0;
+			ob_end_clean();
 			while (!feof($fp) && $file_count < $file_size) {
 				$file_con = fread($fp, $buffer);
 				$file_count+=$buffer;
@@ -838,6 +902,25 @@ class Postman4ExcelBehavior extends Behavior
 		  return false;
 	  }
 	  return true;
+	}
+	
+	/**
+	 * 2 Sorting for Grouping.
+	 * author	: ptr.nov@gmail.com
+	 * update	: 14/02/2017
+	*/
+	private function full2sorting($array,$column=[]){
+		foreach($column as $rows =>$value){
+			$val[]=$value;		
+		}
+		if(count($column)==1){
+			$arySortColumn0=self::array_sorting($array,$val[0], SORT_ASC);
+		}elseif(count($column)==2){	
+			$arySortColumn0=self::array_sorting($array,$val[0], SORT_ASC);
+			$arySortColumn1=self::array_sorting($array,$val[1], SORT_ASC);
+			array_multisort($arySortColumn0,SORT_ASC,$arySortColumn1,SORT_ASC,$array);
+		}
+		return $arySortColumn0;
 	}
 	
 	/**
@@ -896,5 +979,49 @@ class Postman4ExcelBehavior extends Behavior
 			$rslt=$rows;
 		}
 		return $rslt==''?false:true;
+	}
+	
+	/**
+	 * ARRAY GROUPING 
+	 * @author Piter Novian [ptr.nov@gmail.com] 
+	*/	
+	private static function array_group_by($arr, $key)
+	{
+		if (!is_array($arr)) {
+			trigger_error('array_group_by(): The first argument should be an array', E_USER_ERROR);
+		}
+		if (!is_string($key) && !is_int($key) && !is_float($key)) {
+			trigger_error('array_group_by(): The key should be a string or an integer', E_USER_ERROR);
+		}
+		// Load the new array, splitting by the target key
+		$grouped = [];
+		foreach ($arr as $value) {
+			$grouped[$value[$key]][] = $value;
+		}
+		// Recursively build a nested grouping if more parameters are supplied
+		// Each grouped array value is grouped according to the next sequential key
+		if (func_num_args() > 2) {
+			$args = func_get_args();
+			foreach ($grouped as $key => $value) {
+				$parms = array_merge([$value], array_slice($args, 2, func_num_args()));
+				$grouped[$key] = call_user_func_array('array_group_by', $parms);
+			}
+		}
+		return $grouped;
+	}
+	
+	/**
+	 * Find conten on Column.
+	 * Author	: ptr.nov@gmail.com.
+	 * Update	: 15/02/2017.
+	*/
+	function array_find($array, $keys, $searchContent)
+	{
+		foreach($array as $key => $value) {
+			if(trim($value[$keys])===trim($searchContent)){
+				$rslt[]=$value;
+			}
+		}
+		return $rslt;
 	}
 }

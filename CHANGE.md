@@ -6,9 +6,10 @@ Change Log: `yii2-postman4excel`
 **Date:** 2017-02-08
 1. (chg): font-size.
 2. (enh): ColumnGrouping (Grouping Rows).
-3. (enh): Active Column.
-4. (chg): Postman4ExcelBehavior::excelDataFormat. (can used/not).
-5. (chg): autoSize. (Autosize per-sheet content),
+3. (enh): OutlineLevel (level1 dan level2).
+4. (enh): Active Column.['outline1','outline2']
+5. (chg): Postman4ExcelBehavior::excelDataFormat. (can used/not).
+6. (chg): autoSize. (Autosize per-sheet content),
 
 ## Version 2.4.5, 
 **Date:** 2017-02-06
